@@ -9,24 +9,24 @@
 <style>
 /* ── THEMES ─────────────────────────────────────── */
 [data-theme="dark"]{
-  --bg:#08090f; --surf:#0d1019; --panel:#121622; --card:#161c2d;
-  --b1:#1e2840; --b2:#2a3a58;
-  --txt:#c4d0ee; --bright:#eef2ff; --dim:#4e6080; --faint:#1a2236;
-  --acc:#f5a623; --alo:rgba(245,166,35,.1); --abd:rgba(245,166,35,.25);
-  --cyan:#39c8e0; --grn:#3dd68c; --red:#e04040;
-  --cbg:#000; --cclr:#39c8e0;
-  --glow:rgba(245,166,35,.18); --shad:rgba(0,0,0,.6);
-  --scan:rgba(0,0,0,.045);
+  --bg:#08090f; --surf:#0d1019; --panel:#121622; --card:#161c2d;
+  --b1:#1e2840; --b2:#2a3a58;
+  --txt:#c4d0ee; --bright:#eef2ff; --dim:#4e6080; --faint:#1a2236;
+  --acc:#f5a623; --alo:rgba(245,166,35,.1); --abd:rgba(245,166,35,.25);
+  --cyan:#39c8e0; --grn:#3dd68c; --red:#e04040;
+  --cbg:#000; --cclr:#39c8e0;
+  --glow:rgba(245,166,35,.18); --shad:rgba(0,0,0,.6);
+  --scan:rgba(0,0,0,.045);
 }
 [data-theme="light"]{
-  --bg:#f0f2f8; --surf:#ffffff; --panel:#f7f8fc; --card:#ffffff;
-  --b1:#dde2ef; --b2:#c4cce0;
-  --txt:#2a3350; --bright:#111830; --dim:#7080a0; --faint:#e8ebf5;
-  --acc:#c87c08; --alo:rgba(200,124,8,.09); --abd:rgba(200,124,8,.22);
-  --cyan:#1899b8; --grn:#1d9e5e; --red:#c03030;
-  --cbg:#1a1e2e; --cclr:#5dcfe8;
-  --glow:rgba(200,124,8,.12); --shad:rgba(0,0,0,.15);
-  --scan:rgba(0,0,0,0);
+  --bg:#f0f2f8; --surf:#ffffff; --panel:#f7f8fc; --card:#ffffff;
+  --b1:#dde2ef; --b2:#c4cce0;
+  --txt:#2a3350; --bright:#111830; --dim:#7080a0; --faint:#e8ebf5;
+  --acc:#c87c08; --alo:rgba(200,124,8,.09); --abd:rgba(200,124,8,.22);
+  --cyan:#1899b8; --grn:#1d9e5e; --red:#c03030;
+  --cbg:#1a1e2e; --cclr:#5dcfe8;
+  --glow:rgba(200,124,8,.12); --shad:rgba(0,0,0,.15);
+  --scan:rgba(0,0,0,0);
 }
 
 /* ── RESET ───────────────────────────────────────── */
@@ -256,22 +256,22 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 <!-- TOPBAR -->
 
 <div class="topbar">
-  <div class="logo">
-    <div class="logo-gem"></div>
-    <div class="logo-txt">Poly<span>Track</span> Studio</div>
-  </div>
-  <div class="topbar-r">
-    <div id="topInfo">SELECT A MODE TO BEGIN</div>
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
-  </div>
+  <div class="logo">
+    <div class="logo-gem"></div>
+    <div class="logo-txt">Poly<span>Track</span> Studio</div>
+  </div>
+  <div class="topbar-r">
+    <div id="topInfo">SELECT A MODE TO BEGIN</div>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
+  </div>
 </div>
 
 <!-- MODE TABS -->
 
 <div class="tabs">
-  <div class="tab on" id="tab-kml" onclick="switchMode('kml')">🗺 KML Circuit <span class="pill">1:1 SCALE</span></div>
-  <div class="tab" id="tab-shape" onclick="switchMode('shape')">◈ Shape Builder</div>
-  <div class="tab" id="tab-pixel" onclick="switchMode('pixel')">🎨 Pixel Art</div>
+  <div class="tab on" id="tab-kml" onclick="switchMode('kml')">🗺 KML Circuit <span class="pill">1:1 SCALE</span></div>
+  <div class="tab" id="tab-shape" onclick="switchMode('shape')">◈ Shape Builder</div>
+  <div class="tab" id="tab-pixel" onclick="switchMode('pixel')">🎨 Pixel Art</div>
 </div>
 
 <!-- WORKSPACE -->
@@ -283,62 +283,62 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
 <div id="sb-kml">
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Load your KML path</div></div>
-    <div class="info">
-      In <b>Google Earth</b>, draw a path along a road, then <b>right-click → Save Place As → KML</b>.<br>
-      <b>1 block = 20 × 20 m</b> — exact real-world scale.
-    </div>
-    <div class="field">
-      <label>Paste KML content</label>
-      <textarea id="kmlInput" placeholder="&lt;?xml version=&quot;1.0&quot; ...&#10;Paste the full KML file text here." spellcheck="false"></textarea>
-    </div>
-    <div class="drop-zone" id="dropZone">
-      <input type="file" id="fileInput" accept=".kml,.xml">
-      <div style="font-size:1.15rem;margin-bottom:.2rem">📂</div>
-      <div>Or drop a .kml file here</div>
-    </div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Load your KML path</div></div>
+    <div class="info">
+      In <b>Google Earth</b>, draw a path along a road, then <b>right-click → Save Place As → KML</b>.<br>
+      <b>1 block = 20 × 20 m</b> — exact real-world scale.
+    </div>
+    <div class="field">
+      <label>Paste KML content</label>
+      <textarea id="kmlInput" placeholder="&lt;?xml version=&quot;1.0&quot; ...&#10;Paste the full KML file text here." spellcheck="false"></textarea>
+    </div>
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".kml,.xml">
+      <div style="font-size:1.15rem;margin-bottom:.2rem">📂</div>
+      <div>Or drop a .kml file here</div>
+    </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Road settings</div></div>
-    <div class="g2">
-      <div class="field" style="margin:0"><label>Origin X (blocks)</label><input type="number" id="originX" value="500"></div>
-      <div class="field" style="margin:0"><label>Origin Z (blocks)</label><input type="number" id="originZ" value="500"></div>
-    </div>
-    <div class="g2" style="margin-top:.4rem">
-      <div class="field" style="margin:0"><label>Base height Y</label><input type="number" id="originY" value="0"></div>
-      <div class="field" style="margin:0"><label>Road width (blocks)</label><input type="number" id="roadWidth" value="1" min="1" max="10"></div>
-    </div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Road settings</div></div>
+    <div class="g2">
+      <div class="field" style="margin:0"><label>Origin X (blocks)</label><input type="number" id="originX" value="500"></div>
+      <div class="field" style="margin:0"><label>Origin Z (blocks)</label><input type="number" id="originZ" value="500"></div>
+    </div>
+    <div class="g2" style="margin-top:.4rem">
+      <div class="field" style="margin:0"><label>Base height Y</label><input type="number" id="originY" value="0"></div>
+      <div class="field" style="margin:0"><label>Road width (blocks)</label><input type="number" id="roadWidth" value="1" min="1" max="10"></div>
+    </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Path options</div></div>
-    <div class="tog-row">
-      <label for="smoothPath">Smooth path (RDP algorithm)</label>
-      <input type="checkbox" id="smoothPath" checked>
-    </div>
-    <div class="field" style="margin-top:.5rem">
-      <label>Smoothing tolerance (metres)</label>
-      <input type="number" id="smoothTol" value="10" min="1" max="200">
-    </div>
-    <div class="field">
-      <label>Checkpoint turn angle (degrees)</label>
-      <input type="number" id="turnAngle" value="20" min="5" max="90">
-    </div>
-    <div class="tog-row greyed" title="Slope blocks not yet engineered">
-      <label>Use real elevation (Y axis)</label>
-      <input type="checkbox" disabled>
-    </div>
-    <div class="muted-note">⚠ Elevation is disabled — PolyTrack slope blocks are not yet mapped.</div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Path options</div></div>
+    <div class="tog-row">
+      <label for="smoothPath">Smooth path (RDP algorithm)</label>
+      <input type="checkbox" id="smoothPath" checked>
+    </div>
+    <div class="field" style="margin-top:.5rem">
+      <label>Smoothing tolerance (metres)</label>
+      <input type="number" id="smoothTol" value="10" min="1" max="200">
+    </div>
+    <div class="field">
+      <label>Checkpoint turn angle (degrees)</label>
+      <input type="number" id="turnAngle" value="20" min="5" max="90">
+    </div>
+    <div class="tog-row greyed" title="Slope blocks not yet engineered">
+      <label>Use real elevation (Y axis)</label>
+      <input type="checkbox" disabled>
+    </div>
+    <div class="muted-note">⚠ Elevation is disabled — PolyTrack slope blocks are not yet mapped.</div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
-    <div class="field"><label>Track name</label><input type="text" id="kmlTrackName" value="My Circuit" maxlength="50"></div>
-    <div class="field"><label>Author</label><input type="text" id="kmlAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" id="kmlBtn" onclick="generateKML()">⚡ Generate Circuit Code</button>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
+    <div class="field"><label>Track name</label><input type="text" id="kmlTrackName" value="My Circuit" maxlength="50"></div>
+    <div class="field"><label>Author</label><input type="text" id="kmlAuthor" value="Builder" maxlength="50"></div>
+    <button class="btn btn-acc cta" id="kmlBtn" onclick="generateKML()">⚡ Generate Circuit Code</button>
+  </div>
 
 </div><!-- /sb-kml -->
 
@@ -346,111 +346,156 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
 <div id="sb-shape" style="display:none">
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Add a shape</div></div>
-    <div class="field">
-      <label>Shape type</label>
-      <select id="shapeType">
-        <option value="line">Line — point A to point B</option>
-        <option value="filledRect">Filled Rectangle — flat plane</option>
-        <option value="hollowCube">Hollow Cube — walls only</option>
-        <option value="filledCube">Filled Cube — solid volume</option>
-      </select>
-    </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Add a shape</div></div>
+    <div class="field">
+      <label>Shape type</label>
+      <select id="shapeType">
+        <option value="line">Line — point A to point B</option>
+        <option value="filledRect">Filled Rectangle — flat plane</option>
+        <option value="hollowCube">Hollow Cube — walls only</option>
+        <option value="filledCube">Filled Cube — solid volume</option>
+      </select>
+    </div>
 
 ```
 <div id="form-line" class="sf">
-  <div class="field"><label>Block ID</label><input type="number" id="lineId" value="25" min="0" max="255"></div>
-  <div class="field"><label>Start — X · Y · Z</label>
-    <div class="g3"><input type="number" id="lsx" value="0"><input type="number" id="lsy" value="0"><input type="number" id="lsz" value="0"></div>
-  </div>
-  <div class="field"><label>End — X · Y · Z</label>
-    <div class="g3"><input type="number" id="lex" value="100"><input type="number" id="ley" value="0"><input type="number" id="lez" value="0"></div>
-  </div>
-  <div class="field"><label>Rotation (0–3)</label><input type="number" id="lineRot" value="0" min="0" max="3"></div>
+  <div class="field"><label>Block ID</label><input type="number" id="lineId" value="25" min="0" max="255"></div>
+  <div class="field"><label>Start — X · Y · Z</label>
+    <div class="g3"><input type="number" id="lsx" value="0"><input type="number" id="lsy" value="0"><input type="number" id="lsz" value="0"></div>
+  </div>
+  <div class="field"><label>End — X · Y · Z</label>
+    <div class="g3"><input type="number" id="lex" value="100"><input type="number" id="ley" value="0"><input type="number" id="lez" value="0"></div>
+  </div>
+  <div class="field"><label>Rotation (0–3)</label><input type="number" id="lineRot" value="0" min="0" max="3"></div>
 </div>
 
 <div id="form-filledRect" class="sf" style="display:none">
-  <div class="field"><label>Plane orientation</label>
-    <select id="rectPlane">
-      <option value="xz">XZ — horizontal (floor / ceiling)</option>
-      <option value="xy">XY — vertical (front / back wall)</option>
-      <option value="yz">YZ — vertical (left / right wall)</option>
-    </select>
-  </div>
-  <div class="field"><label id="fixedLabel">Fixed Y</label><input type="number" id="fixedCoord" value="0"></div>
-  <div class="g2">
-    <div class="field" style="margin:0"><label id="min1Label">Min X</label><input type="number" id="rectMin1" value="0"></div>
-    <div class="field" style="margin:0"><label id="max1Label">Max X</label><input type="number" id="rectMax1" value="100"></div>
-  </div>
-  <div class="g2" style="margin-top:.35rem">
-    <div class="field" style="margin:0"><label id="min2Label">Min Z</label><input type="number" id="rectMin2" value="0"></div>
-    <div class="field" style="margin:0"><label id="max2Label">Max Z</label><input type="number" id="rectMax2" value="100"></div>
-  </div>
-  <div class="g2" style="margin-top:.35rem">
-    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="rectId" value="25"></div>
-    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="rectRot" value="0" min="0" max="3"></div>
-  </div>
+  <div class="field"><label>Plane orientation</label>
+    <select id="rectPlane">
+      <option value="xz">XZ — horizontal (floor / ceiling)</option>
+      <option value="xy">XY — vertical (front / back wall)</option>
+      <option value="yz">YZ — vertical (left / right wall)</option>
+    </select>
+  </div>
+  <div class="field"><label id="fixedLabel">Fixed Y</label><input type="number" id="fixedCoord" value="0"></div>
+  <div class="g2">
+    <div class="field" style="margin:0"><label id="min1Label">Min X</label><input type="number" id="rectMin1" value="0"></div>
+    <div class="field" style="margin:0"><label id="max1Label">Max X</label><input type="number" id="rectMax1" value="100"></div>
+  </div>
+  <div class="g2" style="margin-top:.35rem">
+    <div class="field" style="margin:0"><label id="min2Label">Min Z</label><input type="number" id="rectMin2" value="0"></div>
+    <div class="field" style="margin:0"><label id="max2Label">Max Z</label><input type="number" id="rectMax2" value="100"></div>
+  </div>
+  <div class="g2" style="margin-top:.35rem">
+    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="rectId" value="25"></div>
+    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="rectRot" value="0" min="0" max="3"></div>
+  </div>
 </div>
 
 <div id="form-hollowCube" class="sf" style="display:none">
-  <div class="field"><label>Min corner — X · Y · Z</label>
-    <div class="g3"><input type="number" id="hcMinX" value="0"><input type="number" id="hcMinY" value="0"><input type="number" id="hcMinZ" value="0"></div>
-  </div>
-  <div class="field"><label>Max corner — X · Y · Z</label>
-    <div class="g3"><input type="number" id="hcMaxX" value="100"><input type="number" id="hcMaxY" value="100"><input type="number" id="hcMaxZ" value="100"></div>
-  </div>
-  <div class="g2" style="margin-top:.35rem">
-    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="hcId" value="25"></div>
-    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="hcRot" value="0" min="0" max="3"></div>
-  </div>
+  <div class="field"><label>Min corner — X · Y · Z</label>
+    <div class="g3"><input type="number" id="hcMinX" value="0"><input type="number" id="hcMinY" value="0"><input type="number" id="hcMinZ" value="0"></div>
+  </div>
+  <div class="field"><label>Max corner — X · Y · Z</label>
+    <div class="g3"><input type="number" id="hcMaxX" value="100"><input type="number" id="hcMaxY" value="100"><input type="number" id="hcMaxZ" value="100"></div>
+  </div>
+  <div class="g2" style="margin-top:.35rem">
+    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="hcId" value="25"></div>
+    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="hcRot" value="0" min="0" max="3"></div>
+  </div>
 </div>
 
 <div id="form-filledCube" class="sf" style="display:none">
-  <div class="field"><label>Min corner — X · Y · Z</label>
-    <div class="g3"><input type="number" id="fcMinX" value="0"><input type="number" id="fcMinY" value="0"><input type="number" id="fcMinZ" value="0"></div>
-  </div>
-  <div class="field"><label>Max corner — X · Y · Z</label>
-    <div class="g3"><input type="number" id="fcMaxX" value="100"><input type="number" id="fcMaxY" value="100"><input type="number" id="fcMaxZ" value="100"></div>
-  </div>
-  <div class="g2" style="margin-top:.35rem">
-    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="fcId" value="25"></div>
-    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="fcRot" value="0" min="0" max="3"></div>
-  </div>
+  <div class="field"><label>Min corner — X · Y · Z</label>
+    <div class="g3"><input type="number" id="fcMinX" value="0"><input type="number" id="fcMinY" value="0"><input type="number" id="fcMinZ" value="0"></div>
+  </div>
+  <div class="field"><label>Max corner — X · Y · Z</label>
+    <div class="g3"><input type="number" id="fcMaxX" value="100"><input type="number" id="fcMaxY" value="100"><input type="number" id="fcMaxZ" value="100"></div>
+  </div>
+  <div class="g2" style="margin-top:.35rem">
+    <div class="field" style="margin:0"><label>Block ID</label><input type="number" id="fcId" value="25"></div>
+    <div class="field" style="margin:0"><label>Rotation</label><input type="number" id="fcRot" value="0" min="0" max="3"></div>
+  </div>
 </div>
 
 <button class="btn btn-acc btn-full" onclick="addShape()" style="margin-top:.55rem">+ Add Shape</button>
 ```
 
-  </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Review shape list</div></div>
-    <div class="lines-list" id="linesList">
-      <div class="empty-st"><div>◈</div><p>No shapes yet.<br>Add shapes above to build your track.</p></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-ghost btn-sm" onclick="exportJSON()">Export JSON</button>
-      <button class="btn btn-del btn-sm" onclick="clearLines()">Clear All</button>
-    </div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Review shape list</div></div>
+    <div class="lines-list" id="linesList">
+      <div class="empty-st"><div>◈</div><p>No shapes yet.<br>Add shapes above to build your track.</p></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="exportJSON()">Export JSON</button>
+      <button class="btn btn-del btn-sm" onclick="clearLines()">Clear All</button>
+    </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">ID test track (optional)</div></div>
-    <div class="info">Generates one block of every ID in a row — useful for seeing what each block type looks like in-game.</div>
-    <div class="g2">
-      <div class="field" style="margin:0"><label>Min ID</label><input type="number" id="minId" value="1" min="0" max="255"></div>
-      <div class="field" style="margin:0"><label>Max ID</label><input type="number" id="maxId" value="50" min="0" max="255"></div>
-    </div>
-    <button class="btn btn-ghost btn-full" onclick="generateTestTrack()" style="margin-top:.45rem">Generate ID Test Track</button>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">ID test track (optional)</div></div>
+    <div class="info">Generates one block of every ID in a row — useful for seeing what each block type looks like in-game.</div>
+    <div class="g2">
+      <div class="field" style="margin:0"><label>Min ID</label><input type="number" id="minId" value="1" min="0" max="255"></div>
+      <div class="field" style="margin:0"><label>Max ID</label><input type="number" id="maxId" value="50" min="0" max="255"></div>
+    </div>
+    <button class="btn btn-ghost btn-full" onclick="generateTestTrack()" style="margin-top:.45rem">Generate ID Test Track</button>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
-    <div class="field"><label>Track name</label><input type="text" id="shapeTrackName" value="My Track" maxlength="50"></div>
-    <div class="field"><label>Author</label><input type="text" id="shapeAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" onclick="generateShape()">⚡ Generate Track Code</button>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Hill inserter</div></div>
+    <div class="info">
+      Places a symmetric hill using <b>ID 145</b> (0°→45° ramp) automatically rotated to face any direction.<br>
+      <b>Hill = ramp up + ramp down.</b> Each half is 4 blocks long. Total: 80 m long, 20 m high.
+    </div>
+
+```
+<!-- Rotation diagram -->
+<div id="hillDiagram" style="margin-bottom:.65rem;background:var(--card);border:1px solid var(--b1);border-radius:4px;padding:.6rem;text-align:center">
+  <canvas id="hillCanvas" width="240" height="160" style="display:block;margin:0 auto"></canvas>
+  <div style="font-size:.6rem;color:var(--dim);margin-top:.35rem;letter-spacing:1px">ROTATION PREVIEW — drag angle or type below</div>
+</div>
+
+<div class="field">
+  <label>Direction angle (degrees, 0 = +Z, 90 = +X)</label>
+  <div style="display:flex;gap:.35rem;align-items:center">
+    <input type="range" id="hillAngle" min="0" max="359" value="0" style="flex:1;accent-color:var(--acc)" oninput="syncHillAngle(this.value)">
+    <input type="number" id="hillAngleTxt" value="0" min="0" max="359" style="width:58px!important;text-align:center" oninput="syncHillAngle(this.value)">
+  </div>
+</div>
+
+<div class="field"><label>Rotation info</label>
+  <div id="hillRotInfo" style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--acc);background:var(--panel);border:1px solid var(--b1);border-radius:3px;padding:.38rem .55rem;line-height:1.7">
+    Up-ramp rot=0 · Down-ramp rot=2
+  </div>
+</div>
+
+<div class="field"><label>Hill base position — X · Y · Z</label>
+  <div class="g3">
+    <input type="number" id="hillX" value="0" placeholder="X">
+    <input type="number" id="hillY" value="0" placeholder="Y">
+    <input type="number" id="hillZ" value="0" placeholder="Z">
+  </div>
+</div>
+
+<div class="field"><label>Width (blocks, default 1)</label>
+  <input type="number" id="hillWidth" value="1" min="1" max="20">
+</div>
+
+<button class="btn btn-acc btn-full" onclick="addHill()" style="margin-top:.1rem">⛰ Add Hill to List</button>
+```
+
+  </div>
+
+  <div class="step">
+    <div class="step-hd"><div class="step-num">5</div><div class="step-lbl">Name &amp; generate</div></div>
+    <div class="field"><label>Track name</label><input type="text" id="shapeTrackName" value="My Track" maxlength="50"></div>
+    <div class="field"><label>Author</label><input type="text" id="shapeAuthor" value="Builder" maxlength="50"></div>
+    <button class="btn btn-acc cta" onclick="generateShape()">⚡ Generate Track Code</button>
+  </div>
 
 </div><!-- /sb-shape -->
 
@@ -458,55 +503,55 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
 <div id="sb-pixel" style="display:none">
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Upload an image</div></div>
-    <div class="info">The image is converted to <b>3 shades</b> (dark / mid / light). Each pixel becomes one block. High-contrast images work best.</div>
-    <div class="field"><label>Image file (PNG / JPEG / GIF)</label><input type="file" id="imgUpload" accept="image/*"></div>
-    <div class="g2">
-      <div class="field" style="margin:0"><label>Resolution (longest side)</label><input type="number" id="resValue" value="64" min="8" max="256"></div>
-      <div class="field" style="margin:0"><label>Spacing (blocks/px)</label><input type="number" id="pixelSpacing" value="1" min="1" max="10"></div>
-    </div>
-    <label class="chk"><input type="checkbox" id="preserveAspect" checked> Preserve aspect ratio</label>
-    <label class="chk"><input type="checkbox" id="use4x" checked> 4× PolyTrack coordinate scale</label>
-    <button class="btn btn-acc btn-full" onclick="processUpload()" style="margin-top:.55rem">Preview Image →</button>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Upload an image</div></div>
+    <div class="info">The image is converted to <b>3 shades</b> (dark / mid / light). Each pixel becomes one block. High-contrast images work best.</div>
+    <div class="field"><label>Image file (PNG / JPEG / GIF)</label><input type="file" id="imgUpload" accept="image/*"></div>
+    <div class="g2">
+      <div class="field" style="margin:0"><label>Resolution (longest side)</label><input type="number" id="resValue" value="64" min="8" max="256"></div>
+      <div class="field" style="margin:0"><label>Spacing (blocks/px)</label><input type="number" id="pixelSpacing" value="1" min="1" max="10"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="preserveAspect" checked> Preserve aspect ratio</label>
+    <label class="chk"><input type="checkbox" id="use4x" checked> 4× PolyTrack coordinate scale</label>
+    <button class="btn btn-acc btn-full" onclick="processUpload()" style="margin-top:.55rem">Preview Image →</button>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Assign block IDs to 3 shades</div></div>
-    <div class="map-row">
-      <div class="swatch" style="background:#1a2eaa"></div>
-      <span>Dark pixels</span>
-      <input type="number" id="idBin0" value="5" min="0" max="255">
-    </div>
-    <div class="map-row">
-      <div class="swatch" style="background:#7a7e96"></div>
-      <span>Mid pixels</span>
-      <input type="number" id="idBin1" value="25" min="0" max="255">
-    </div>
-    <div class="map-row">
-      <div class="swatch" style="background:#d8ddf0"></div>
-      <span>Light pixels</span>
-      <input type="number" id="idBin2" value="52" min="0" max="255">
-    </div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Assign block IDs to 3 shades</div></div>
+    <div class="map-row">
+      <div class="swatch" style="background:#1a2eaa"></div>
+      <span>Dark pixels</span>
+      <input type="number" id="idBin0" value="5" min="0" max="255">
+    </div>
+    <div class="map-row">
+      <div class="swatch" style="background:#7a7e96"></div>
+      <span>Mid pixels</span>
+      <input type="number" id="idBin1" value="25" min="0" max="255">
+    </div>
+    <div class="map-row">
+      <div class="swatch" style="background:#d8ddf0"></div>
+      <span>Light pixels</span>
+      <input type="number" id="idBin2" value="52" min="0" max="255">
+    </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Position in world</div></div>
-    <div class="field"><label>Offset — X · Y · Z</label>
-      <div class="g3">
-        <input type="number" id="offsetX" value="0" placeholder="X">
-        <input type="number" id="offsetY" value="0" placeholder="Y">
-        <input type="number" id="offsetZ" value="0" placeholder="Z">
-      </div>
-    </div>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Position in world</div></div>
+    <div class="field"><label>Offset — X · Y · Z</label>
+      <div class="g3">
+        <input type="number" id="offsetX" value="0" placeholder="X">
+        <input type="number" id="offsetY" value="0" placeholder="Y">
+        <input type="number" id="offsetZ" value="0" placeholder="Z">
+      </div>
+    </div>
+  </div>
 
-  <div class="step">
-    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
-    <div class="field"><label>Track name</label><input type="text" id="pixelTrackName" value="Pixel Art" maxlength="50"></div>
-    <div class="field"><label>Author</label><input type="text" id="pixelAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" onclick="generatePixel()">⚡ Generate Pixel Track</button>
-  </div>
+  <div class="step">
+    <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
+    <div class="field"><label>Track name</label><input type="text" id="pixelTrackName" value="Pixel Art" maxlength="50"></div>
+    <div class="field"><label>Author</label><input type="text" id="pixelAuthor" value="Builder" maxlength="50"></div>
+    <button class="btn btn-acc cta" onclick="generatePixel()">⚡ Generate Pixel Track</button>
+  </div>
 
 </div><!-- /sb-pixel -->
 </div><!-- /sidebar -->
@@ -515,75 +560,75 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
 <div class="main">
 
-  <div class="stats-bar">
-    <div class="stat"><div class="sv" id="sA">—</div><div class="sl" id="slA">—</div></div>
-    <div class="stat"><div class="sv" id="sB">—</div><div class="sl" id="slB">—</div></div>
-    <div class="stat"><div class="sv" id="sC">—</div><div class="sl" id="slC">—</div></div>
-    <div class="stat"><div class="sv" id="sD">—</div><div class="sl" id="slD">—</div></div>
-    <div class="stat"><div class="sv" id="sE">—</div><div class="sl">Code Size</div></div>
-  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="sv" id="sA">—</div><div class="sl" id="slA">—</div></div>
+    <div class="stat"><div class="sv" id="sB">—</div><div class="sl" id="slB">—</div></div>
+    <div class="stat"><div class="sv" id="sC">—</div><div class="sl" id="slC">—</div></div>
+    <div class="stat"><div class="sv" id="sD">—</div><div class="sl" id="slD">—</div></div>
+    <div class="stat"><div class="sv" id="sE">—</div><div class="sl">Code Size</div></div>
+  </div>
 
-  <div class="content">
+  <div class="content">
 
 ```
 <!-- KML canvas (shown only in kml mode) -->
 <div class="cvs-wrap" id="kmlWrap">
-  <canvas id="kmlCanvas" height="310"></canvas>
-  <div class="cvs-info" id="cvInfo">NO TRACK LOADED</div>
+  <canvas id="kmlCanvas" height="310"></canvas>
+  <div class="cvs-info" id="cvInfo">NO TRACK LOADED</div>
 </div>
 
 <!-- Pixel preview (shown only in pixel mode after upload) -->
 <div id="pixPanel" style="display:none">
-  <div class="px-grid">
-    <div>
-      <p style="font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:.45rem">COLOUR PREVIEW</p>
-      <div class="info">These 3 colours represent your 3 block IDs. Adjust the ID numbers in Step 2, then hit Generate.</div>
-      <div style="display:flex;gap:.5rem;margin-top:.5rem">
-        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
-          <div class="sv" id="pixCount" style="font-size:.9rem">0</div><div class="sl">Pixels</div>
-        </div>
-        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
-          <div class="sv" id="pixW" style="font-size:.9rem">—</div><div class="sl">Width</div>
-        </div>
-        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
-          <div class="sv" id="pixH" style="font-size:.9rem">—</div><div class="sl">Height</div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <p style="font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem">PREVIEW</p>
-      <div class="px-preview"><canvas id="previewCanvas" width="270" height="270"></canvas></div>
-    </div>
-  </div>
+  <div class="px-grid">
+    <div>
+      <p style="font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:.45rem">COLOUR PREVIEW</p>
+      <div class="info">These 3 colours represent your 3 block IDs. Adjust the ID numbers in Step 2, then hit Generate.</div>
+      <div style="display:flex;gap:.5rem;margin-top:.5rem">
+        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
+          <div class="sv" id="pixCount" style="font-size:.9rem">0</div><div class="sl">Pixels</div>
+        </div>
+        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
+          <div class="sv" id="pixW" style="font-size:.9rem">—</div><div class="sl">Width</div>
+        </div>
+        <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
+          <div class="sv" id="pixH" style="font-size:.9rem">—</div><div class="sl">Height</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem">PREVIEW</p>
+      <div class="px-preview"><canvas id="previewCanvas" width="270" height="270"></canvas></div>
+    </div>
+  </div>
 </div>
 
 <!-- Track code output -->
 <div class="panel">
-  <div class="ph">
-    <span class="pt">Track Code Output</span>
-    <span class="log-txt" id="logBox"></span>
-  </div>
-  <div class="code-box" id="outputCode">Generate a track using any mode above — the PolyTrack import code will appear here.</div>
-  <div class="pf">
-    <button class="btn btn-ghost btn-sm" onclick="copyCode()">📋 Copy</button>
-    <button class="btn btn-ghost btn-sm" onclick="downloadCode()">⬇ Download .txt</button>
-  </div>
+  <div class="ph">
+    <span class="pt">Track Code Output</span>
+    <span class="log-txt" id="logBox"></span>
+  </div>
+  <div class="code-box" id="outputCode">Generate a track using any mode above — the PolyTrack import code will appear here.</div>
+  <div class="pf">
+    <button class="btn btn-ghost btn-sm" onclick="copyCode()">📋 Copy</button>
+    <button class="btn btn-ghost btn-sm" onclick="downloadCode()">⬇ Download .txt</button>
+  </div>
 </div>
 
 <!-- Debug console -->
 <div class="panel">
-  <div class="ph" style="cursor:pointer" onclick="toggleDebug()">
-    <span class="pt">Debug Console</span>
-    <span id="dbgToggle" style="font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--dim)">▶ expand</span>
-  </div>
-  <div id="dbgPanel" style="display:none">
-    <div id="debugLog"></div>
-    <div class="pf"><button class="btn btn-ghost btn-sm" onclick="clearDbg()">Clear</button></div>
-  </div>
+  <div class="ph" style="cursor:pointer" onclick="toggleDebug()">
+    <span class="pt">Debug Console</span>
+    <span id="dbgToggle" style="font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--dim)">▶ expand</span>
+  </div>
+  <div id="dbgPanel" style="display:none">
+    <div id="debugLog"></div>
+    <div class="pf"><button class="btn btn-ghost btn-sm" onclick="clearDbg()">Clear</button></div>
+  </div>
 </div>
 ```
 
-  </div><!-- /content -->
+  </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /workspace -->
 
@@ -602,28 +647,28 @@ let gCode=''; // last generated code
 let gMode='kml';
 
 const ID_NAMES={
-  5:'Start (legacy)',6:'Finish (legacy)',
-  25:'Road',52:'Checkpoint',
-  75:'Checkpoint (numbered)',76:'Finish',92:'Start'
+  5:'Start (legacy)',6:'Finish (legacy)',
+  25:'Road',52:'Checkpoint',
+  75:'Checkpoint (numbered)',76:'Finish',92:'Start'
 };
 
 // ══════════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════════
 function toggleTheme(){
-  const html=document.documentElement;
-  const isDark=html.getAttribute('data-theme')==='dark';
-  html.setAttribute('data-theme',isDark?'light':'dark');
-  document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';
-  localStorage.setItem('pt-theme',isDark?'light':'dark');
-  if(gMode==='kml') redrawKML();
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';
+  localStorage.setItem('pt-theme',isDark?'light':'dark');
+  if(gMode==='kml') redrawKML();
 }
 (()=>{
-  const saved=localStorage.getItem('pt-theme');
-  if(saved){
-    document.documentElement.setAttribute('data-theme',saved);
-    document.getElementById('themeBtn').textContent=saved==='light'?'🌙':'☀️';
-  }
+  const saved=localStorage.getItem('pt-theme');
+  if(saved){
+    document.documentElement.setAttribute('data-theme',saved);
+    document.getElementById('themeBtn').textContent=saved==='light'?'🌙':'☀️';
+  }
 })();
 
 // ══════════════════════════════════════════════════
@@ -631,50 +676,50 @@ function toggleTheme(){
 // ══════════════════════════════════════════════════
 let _tt;
 function toast(msg){
-  const e=document.getElementById('toast');
-  e.textContent=msg;e.classList.add('show');
-  clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2300);
+  const e=document.getElementById('toast');
+  e.textContent=msg;e.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2300);
 }
 function log(msg,c=''){document.getElementById('logBox').innerHTML=`<span class="${c}">${msg}</span>`;}
 const _dl=[];
 function dbg(msg,c=''){
-  const ts=new Date().toLocaleTimeString('en',{hour12:false});
-  _dl.push({ts,msg,c});if(_dl.length>200)_dl.shift();
-  const el=document.getElementById('debugLog');if(!el)return;
-  const C={err:'#e04040',warn:'#f5a623',ok:'#3dd68c','':'#3a6060'};
-  el.innerHTML=_dl.map(l=>`<div style="color:${C[l.c]||C['']}">[${l.ts}] ${l.msg}</div>`).join('');
-  el.scrollTop=el.scrollHeight;
+  const ts=new Date().toLocaleTimeString('en',{hour12:false});
+  _dl.push({ts,msg,c});if(_dl.length>200)_dl.shift();
+  const el=document.getElementById('debugLog');if(!el)return;
+  const C={err:'#e04040',warn:'#f5a623',ok:'#3dd68c','':'#3a6060'};
+  el.innerHTML=_dl.map(l=>`<div style="color:${C[l.c]||C['']}">[${l.ts}] ${l.msg}</div>`).join('');
+  el.scrollTop=el.scrollHeight;
 }
 function clearDbg(){_dl.length=0;const e=document.getElementById('debugLog');if(e)e.innerHTML='';}
 function toggleDebug(){
-  const p=document.getElementById('dbgPanel'),t=document.getElementById('dbgToggle');
-  const o=p.style.display==='none';p.style.display=o?'':'none';
-  t.textContent=o?'▼ collapse':'▶ expand';
+  const p=document.getElementById('dbgPanel'),t=document.getElementById('dbgToggle');
+  const o=p.style.display==='none';p.style.display=o?'':'none';
+  t.textContent=o?'▼ collapse':'▶ expand';
 }
 
 // ══════════════════════════════════════════════════
 // MODE SWITCH
 // ══════════════════════════════════════════════════
 function switchMode(m){
-  gMode=m;
-  ['kml','shape','pixel'].forEach(n=>{
-    document.getElementById('tab-'+n).classList.toggle('on',n===m);
-    document.getElementById('sb-'+n).style.display=n===m?'':'none';
-  });
-  document.getElementById('kmlWrap').style.display=m==='kml'?'':'none';
-  document.getElementById('pixPanel').style.display=(m==='pixel'&&gPixels)?'':'none';
-  const cfg={
-    kml:{A:'KML Points',B:'Road Blocks',C:'Checkpoints',D:'Circuit Length'},
-    shape:{A:'Lines',B:'Total Blocks',C:'Unique IDs',D:''},
-    pixel:{A:'Pixels',B:'Width (px)',C:'Height (px)',D:''},
-  };
-  Object.keys(cfg[m]).forEach(k=>{document.getElementById('sl'+k).textContent=cfg[m][k];});
-  document.getElementById('topInfo').textContent={
-    kml:'KML → 1:1 REAL-WORLD CIRCUIT',
-    shape:'MANUAL SHAPE BUILDER',
-    pixel:'IMAGE → PIXEL ART TRACK',
-  }[m];
-  if(m==='shape')refreshShapeUI();
+  gMode=m;
+  ['kml','shape','pixel'].forEach(n=>{
+    document.getElementById('tab-'+n).classList.toggle('on',n===m);
+    document.getElementById('sb-'+n).style.display=n===m?'':'none';
+  });
+  document.getElementById('kmlWrap').style.display=m==='kml'?'':'none';
+  document.getElementById('pixPanel').style.display=(m==='pixel'&&gPixels)?'':'none';
+  const cfg={
+    kml:{A:'KML Points',B:'Road Blocks',C:'Checkpoints',D:'Circuit Length'},
+    shape:{A:'Lines',B:'Total Blocks',C:'Unique IDs',D:''},
+    pixel:{A:'Pixels',B:'Width (px)',C:'Height (px)',D:''},
+  };
+  Object.keys(cfg[m]).forEach(k=>{document.getElementById('sl'+k).textContent=cfg[m][k];});
+  document.getElementById('topInfo').textContent={
+    kml:'KML → 1:1 REAL-WORLD CIRCUIT',
+    shape:'MANUAL SHAPE BUILDER',
+    pixel:'IMAGE → PIXEL ART TRACK',
+  }[m];
+  if(m==='shape')refreshShapeUI();
 }
 function setStat(id,v){document.getElementById('s'+id).textContent=v??'—';}
 
@@ -682,87 +727,87 @@ function setStat(id,v){document.getElementById('s'+id).textContent=v??'—';}
 // ENCODING ENGINE (shared)
 // ══════════════════════════════════════════════════
 async function zlibCompress(data){
-  const cs=new CompressionStream('deflate');
-  const w=cs.writable.getWriter();
-  w.write(data instanceof Uint8Array?data:new Uint8Array(data));w.close();
-  const chunks=[];const reader=cs.readable.getReader();
-  for(;;){const{done,value}=await reader.read();if(done)break;chunks.push(value);}
-  const out=new Uint8Array(chunks.reduce((s,c)=>s+c.length,0));
-  let off=0;chunks.forEach(c=>{out.set(c,off);off+=c.length;});return out;
+  const cs=new CompressionStream('deflate');
+  const w=cs.writable.getWriter();
+  w.write(data instanceof Uint8Array?data:new Uint8Array(data));w.close();
+  const chunks=[];const reader=cs.readable.getReader();
+  for(;;){const{done,value}=await reader.read();if(done)break;chunks.push(value);}
+  const out=new Uint8Array(chunks.reduce((s,c)=>s+c.length,0));
+  let off=0;chunks.forEach(c=>{out.set(c,off);off+=c.length;});return out;
 }
 function encode62(buf){
-  let b=0,r='';
-  while(b<buf.length*8){
-    const bi=b>>>3,off=b&7;if(bi>=buf.length)break;
-    let v=off<=2||bi>=buf.length-1?(buf[bi]>>>off)&63:((buf[bi]>>>off)&63)|((buf[bi+1]&(63>>>(8-off)))<<(8-off));
-    if((v&30)===30){v&=31;b+=5;}else b+=6;r+=CHARS[v];
-  }return r;
+  let b=0,r='';
+  while(b<buf.length*8){
+    const bi=b>>>3,off=b&7;if(bi>=buf.length)break;
+    let v=off<=2||bi>=buf.length-1?(buf[bi]>>>off)&63:((buf[bi]>>>off)&63)|((buf[bi+1]&(63>>>(8-off)))<<(8-off));
+    if((v&30)===30){v&=31;b+=5;}else b+=6;r+=CHARS[v];
+  }return r;
 }
 const gBN=m=>m<128?1:m<32768?2:m<8388608?3:4;
 const wU32=(b,v)=>b.push(v&255,(v>>8)&255,(v>>16)&255,(v>>24)&255);
 const wC=(b,v,n)=>{for(let i=0;i<n;i++)b.push((v>>(i*8))&255);};
 
 function buildBinary(ll){
-  const all=ll.flatMap(l=>l.points);
-  if(!all.length)return new Uint8Array(0);
-  let mnX=Infinity,mnY=Infinity,mnZ=Infinity;
-  for(const p of all){if(p.x<mnX)mnX=p.x;if(p.y<mnY)mnY=p.y;if(p.z<mnZ)mnZ=p.z;}
-  const sx=mnX<0?-mnX:0,sy=mnY<0?-mnY:0,sz=mnZ<0?-mnZ:0;
-  let mxX=0,mxY=0,mxZ=0;
-  for(const p of all){mxX=Math.max(mxX,p.x+sx);mxY=Math.max(mxY,p.y+sy);mxZ=Math.max(mxZ,p.z+sz);}
-  const bin=[];
-  bin.push(0,0);wU32(bin,0);wU32(bin,0);wU32(bin,0);
-  const xB=gBN(mxX),yB=gBN(mxY),zB=gBN(mxZ);
-  bin.push((zB<<4)|(yB<<2)|xB);
-  dbg(`Binary: max=(${mxX},${mxY},${mxZ}) bw=(${xB},${yB},${zB}) shift=(${sx},${sy},${sz})`);
-  const g={};
-  for(const l of ll){
-    if(!g[l.id])g[l.id]=[];
-    for(const p of l.points)g[l.id].push({x:p.x+sx,y:p.y+sy,z:p.z+sz,rot:l.rot||0,dir:0,color:0,cpIdx:p.cpIndex??l.cpIndex??0});
-  }
-  for(const id of Object.keys(g).sort((a,b)=>+a-+b)){
-    const blocks=g[id];bin.push(+id);wU32(bin,blocks.length);
-    for(const b of blocks){
-      wC(bin,b.x,xB);wC(bin,b.y,yB);wC(bin,b.z,zB);
-      bin.push(b.rot,b.dir,b.color);
-      if(+id===75)bin.push(b.cpIdx&0xff,0);
-      if([65,77].includes(+id))bin.push(0,0);
-      if([91,92,93].includes(+id))wU32(bin,0);
-    }
-  }
-  dbg(`Binary: ${bin.length} bytes — IDs: ${Object.keys(g).map(id=>`${id}×${g[id].length}`).join(', ')}`,'ok');
-  return new Uint8Array(bin);
+  const all=ll.flatMap(l=>l.points);
+  if(!all.length)return new Uint8Array(0);
+  let mnX=Infinity,mnY=Infinity,mnZ=Infinity;
+  for(const p of all){if(p.x<mnX)mnX=p.x;if(p.y<mnY)mnY=p.y;if(p.z<mnZ)mnZ=p.z;}
+  const sx=mnX<0?-mnX:0,sy=mnY<0?-mnY:0,sz=mnZ<0?-mnZ:0;
+  let mxX=0,mxY=0,mxZ=0;
+  for(const p of all){mxX=Math.max(mxX,p.x+sx);mxY=Math.max(mxY,p.y+sy);mxZ=Math.max(mxZ,p.z+sz);}
+  const bin=[];
+  bin.push(0,0);wU32(bin,0);wU32(bin,0);wU32(bin,0);
+  const xB=gBN(mxX),yB=gBN(mxY),zB=gBN(mxZ);
+  bin.push((zB<<4)|(yB<<2)|xB);
+  dbg(`Binary: max=(${mxX},${mxY},${mxZ}) bw=(${xB},${yB},${zB}) shift=(${sx},${sy},${sz})`);
+  const g={};
+  for(const l of ll){
+    if(!g[l.id])g[l.id]=[];
+    for(const p of l.points)g[l.id].push({x:p.x+sx,y:p.y+sy,z:p.z+sz,rot:l.rot||0,dir:0,color:0,cpIdx:p.cpIndex??l.cpIndex??0});
+  }
+  for(const id of Object.keys(g).sort((a,b)=>+a-+b)){
+    const blocks=g[id];bin.push(+id);wU32(bin,blocks.length);
+    for(const b of blocks){
+      wC(bin,b.x,xB);wC(bin,b.y,yB);wC(bin,b.z,zB);
+      bin.push(b.rot,b.dir,b.color);
+      if(+id===75)bin.push(b.cpIdx&0xff,0);
+      if([65,77].includes(+id))bin.push(0,0);
+      if([91,92,93].includes(+id))wU32(bin,0);
+    }
+  }
+  dbg(`Binary: ${bin.length} bytes — IDs: ${Object.keys(g).map(id=>`${id}×${g[id].length}`).join(', ')}`,'ok');
+  return new Uint8Array(bin);
 }
 
 async function encodeTrack(ll,name,author){
-  const bin=buildBinary(ll);
-  const te=new TextEncoder();
-  const nb=te.encode(name),ab=te.encode(author);
-  const pre=new Uint8Array([nb.length,...nb,ab.length,...ab]);
-  const full=new Uint8Array(pre.length+bin.length);
-  full.set(pre);full.set(bin,pre.length);
-  const c1=await zlibCompress(full),b1=encode62(c1);
-  const c2=await zlibCompress(te.encode(b1));
-  return'PolyTrack1'+encode62(c2);
+  const bin=buildBinary(ll);
+  const te=new TextEncoder();
+  const nb=te.encode(name),ab=te.encode(author);
+  const pre=new Uint8Array([nb.length,...nb,ab.length,...ab]);
+  const full=new Uint8Array(pre.length+bin.length);
+  full.set(pre);full.set(bin,pre.length);
+  const c1=await zlibCompress(full),b1=encode62(c1);
+  const c2=await zlibCompress(te.encode(b1));
+  return'PolyTrack1'+encode62(c2);
 }
 
 function emitCode(code){
-  gCode=code;
-  document.getElementById('outputCode').textContent=code;
-  setStat('E',(code.length/1024).toFixed(1)+' KB');
-  log(`Done — ${code.length} chars`,'ok');
-  dbg(`Encoded: ${code.length} chars`,'ok');
+  gCode=code;
+  document.getElementById('outputCode').textContent=code;
+  setStat('E',(code.length/1024).toFixed(1)+' KB');
+  log(`Done — ${code.length} chars`,'ok');
+  dbg(`Encoded: ${code.length} chars`,'ok');
 }
 function copyCode(){
-  if(!gCode){toast('Generate a track first');return;}
-  navigator.clipboard.writeText(gCode).then(()=>toast('Copied!'));
+  if(!gCode){toast('Generate a track first');return;}
+  navigator.clipboard.writeText(gCode).then(()=>toast('Copied!'));
 }
 function downloadCode(){
-  if(!gCode){toast('Generate a track first');return;}
-  const name=(document.getElementById(gMode+'TrackName')?.value||'polytrack').replace(/\W+/g,'_');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([gCode],{type:'text/plain'}));
-  a.download=name+'.txt';a.click();
+  if(!gCode){toast('Generate a track first');return;}
+  const name=(document.getElementById(gMode+'TrackName')?.value||'polytrack').replace(/\W+/g,'_');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([gCode],{type:'text/plain'}));
+  a.download=name+'.txt';a.click();
 }
 
 // ══════════════════════════════════════════════════
@@ -772,160 +817,160 @@ const CS=4; // PolyTrack coordinate scale
 let _lastKMLResult=null;
 
 function parseKML(txt){
-  txt=txt.replace(/^\uFEFF/,'').replace(/<\?xml[^>]*\?>\s*/i,'');
-  const doc=new DOMParser().parseFromString(txt,'text/xml');
-  const el=doc.querySelector('coordinates')||doc.getElementsByTagNameNS('http://www.opengis.net/kml/2.2','coordinates')[0];
-  if(!el)throw new Error('No <coordinates> found — paste a valid KML path file.');
-  const coords=[];
-  for(const pt of el.textContent.trim().split(/\s+/)){
-    const p=pt.split(',').map(Number);
-    if(p.length>=2&&!p.some(isNaN))coords.push({lon:p[0],lat:p[1],alt:p[2]||0});
-  }
-  if(coords.length<2)throw new Error('KML must contain at least 2 coordinate points.');
-  return coords;
+  txt=txt.replace(/^\uFEFF/,'').replace(/<\?xml[^>]*\?>\s*/i,'');
+  const doc=new DOMParser().parseFromString(txt,'text/xml');
+  const el=doc.querySelector('coordinates')||doc.getElementsByTagNameNS('http://www.opengis.net/kml/2.2','coordinates')[0];
+  if(!el)throw new Error('No <coordinates> found — paste a valid KML path file.');
+  const coords=[];
+  for(const pt of el.textContent.trim().split(/\s+/)){
+    const p=pt.split(',').map(Number);
+    if(p.length>=2&&!p.some(isNaN))coords.push({lon:p[0],lat:p[1],alt:p[2]||0});
+  }
+  if(coords.length<2)throw new Error('KML must contain at least 2 coordinate points.');
+  return coords;
 }
 function haversineM(lon1,lat1,lon2,lat2){
-  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R*2*Math.asin(Math.sqrt(a));
+  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.asin(Math.sqrt(a));
 }
 function toLocal(coords){
-  const o=coords[0];
-  return coords.map(c=>({
-    x:haversineM(o.lon,o.lat,c.lon,o.lat)*(c.lon>=o.lon?1:-1),
-    z:haversineM(o.lon,o.lat,o.lon,c.lat)*(c.lat>=o.lat?1:-1),
-    alt:c.alt
-  }));
+  const o=coords[0];
+  return coords.map(c=>({
+    x:haversineM(o.lon,o.lat,c.lon,o.lat)*(c.lon>=o.lon?1:-1),
+    z:haversineM(o.lon,o.lat,o.lon,c.lat)*(c.lat>=o.lat?1:-1),
+    alt:c.alt
+  }));
 }
 function rdp(pts,eps){
-  if(pts.length<=2)return pts;
-  let maxD=0,maxI=0;
-  const s=pts[0],e=pts[pts.length-1],dx=e.x-s.x,dz=e.z-s.z,len=Math.sqrt(dx*dx+dz*dz);
-  for(let i=1;i<pts.length-1;i++){
-    const d=len===0?Math.sqrt((pts[i].x-s.x)**2+(pts[i].z-s.z)**2):Math.abs(dz*pts[i].x-dx*pts[i].z+e.x*s.z-e.z*s.x)/len;
-    if(d>maxD){maxD=d;maxI=i;}
-  }
-  if(maxD>eps){const L=rdp(pts.slice(0,maxI+1),eps),R=rdp(pts.slice(maxI),eps);return[...L.slice(0,-1),...R];}
-  return[s,e];
+  if(pts.length<=2)return pts;
+  let maxD=0,maxI=0;
+  const s=pts[0],e=pts[pts.length-1],dx=e.x-s.x,dz=e.z-s.z,len=Math.sqrt(dx*dx+dz*dz);
+  for(let i=1;i<pts.length-1;i++){
+    const d=len===0?Math.sqrt((pts[i].x-s.x)**2+(pts[i].z-s.z)**2):Math.abs(dz*pts[i].x-dx*pts[i].z+e.x*s.z-e.z*s.x)/len;
+    if(d>maxD){maxD=d;maxI=i;}
+  }
+  if(maxD>eps){const L=rdp(pts.slice(0,maxI+1),eps),R=rdp(pts.slice(maxI),eps);return[...L.slice(0,-1),...R];}
+  return[s,e];
 }
 function angleBetween(ax,az,bx,bz){
-  const dot=ax*bx+az*bz,la=Math.sqrt(ax*ax+az*az),lb=Math.sqrt(bx*bx+bz*bz);
-  if(!la||!lb)return 0;
-  return Math.acos(Math.max(-1,Math.min(1,dot/(la*lb))))*180/Math.PI;
+  const dot=ax*bx+az*bz,la=Math.sqrt(ax*ax+az*az),lb=Math.sqrt(bx*bx+bz*bz);
+  if(!la||!lb)return 0;
+  return Math.acos(Math.max(-1,Math.min(1,dot/(la*lb))))*180/Math.PI;
 }
 function kmlPathToLines(local,ox,oy,oz,rw,thr){
-  const bp=local.map(p=>({bx:(Math.round(p.x/20)+ox)*CS,by:oy*CS,bz:(Math.round(p.z/20)+oz)*CS}));
-  const pts=[bp[0]];
-  for(let i=1;i<bp.length;i++){const pv=pts[pts.length-1];if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz)pts.push(bp[i]);}
-  const hW=Math.floor(rw/2)*CS,fW=(rw-1-Math.floor(rw/2))*CS;
-  const seen=new Set(),road=[],cps=[];
-  for(let i=0;i<pts.length-1;i++){
-    const a=pts[i],b=pts[i+1],sdx=b.bx-a.bx,sdz=b.bz-a.bz;
-    const nx=Math.abs(sdx)>=Math.abs(sdz)?0:1,nz=nx?0:1;
-    const center=line3D(a.bx,a.by,a.bz,b.bx,b.by,b.bz);
-    for(const cb of center){
-      const slab=rw<=1?[cb]:line3D(cb.x-nx*hW,cb.y,cb.z-nz*hW,cb.x+nx*fW,cb.y,cb.z+nz*fW);
-      for(const sp of slab){const k=`${sp.x},${sp.y},${sp.z}`;if(!seen.has(k)){seen.add(k);road.push({x:sp.x,y:sp.y,z:sp.z});}}
-    }
-    if(i<pts.length-2){
-      const c=pts[i+2],ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c.bx-b.bx,c.bz-b.bz);
-      if(ang>=thr)cps.push({bx:b.bx,by:b.by,bz:b.bz});
-    }
-  }
-  const out=[];
-  out.push({id:25,points:road,rot:0});
-  cps.forEach((cp,i)=>out.push({id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:i}],rot:0,cpIndex:i}));
-  out.push({id:92,points:[{x:pts[0].bx,y:pts[0].by,z:pts[0].bz}],rot:0});
-  const last=pts[pts.length-1];
-  out.push({id:76,points:[{x:last.bx,y:last.by,z:last.bz}],rot:0});
-  return{lines:out,blockPts:pts,cps,roadBlocks:road.length};
+  const bp=local.map(p=>({bx:(Math.round(p.x/20)+ox)*CS,by:oy*CS,bz:(Math.round(p.z/20)+oz)*CS}));
+  const pts=[bp[0]];
+  for(let i=1;i<bp.length;i++){const pv=pts[pts.length-1];if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz)pts.push(bp[i]);}
+  const hW=Math.floor(rw/2)*CS,fW=(rw-1-Math.floor(rw/2))*CS;
+  const seen=new Set(),road=[],cps=[];
+  for(let i=0;i<pts.length-1;i++){
+    const a=pts[i],b=pts[i+1],sdx=b.bx-a.bx,sdz=b.bz-a.bz;
+    const nx=Math.abs(sdx)>=Math.abs(sdz)?0:1,nz=nx?0:1;
+    const center=line3D(a.bx,a.by,a.bz,b.bx,b.by,b.bz);
+    for(const cb of center){
+      const slab=rw<=1?[cb]:line3D(cb.x-nx*hW,cb.y,cb.z-nz*hW,cb.x+nx*fW,cb.y,cb.z+nz*fW);
+      for(const sp of slab){const k=`${sp.x},${sp.y},${sp.z}`;if(!seen.has(k)){seen.add(k);road.push({x:sp.x,y:sp.y,z:sp.z});}}
+    }
+    if(i<pts.length-2){
+      const c=pts[i+2],ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c.bx-b.bx,c.bz-b.bz);
+      if(ang>=thr)cps.push({bx:b.bx,by:b.by,bz:b.bz});
+    }
+  }
+  const out=[];
+  out.push({id:25,points:road,rot:0});
+  cps.forEach((cp,i)=>out.push({id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:i}],rot:0,cpIndex:i}));
+  out.push({id:92,points:[{x:pts[0].bx,y:pts[0].by,z:pts[0].bz}],rot:0});
+  const last=pts[pts.length-1];
+  out.push({id:76,points:[{x:last.bx,y:last.by,z:last.bz}],rot:0});
+  return{lines:out,blockPts:pts,cps,roadBlocks:road.length};
 }
 
 function redrawKML(){
-  if(_lastKMLResult)drawKMLCanvas(_lastKMLResult.blockPts,_lastKMLResult.cps);
+  if(_lastKMLResult)drawKMLCanvas(_lastKMLResult.blockPts,_lastKMLResult.cps);
 }
 function drawKMLCanvas(blockPts,cps){
-  const canvas=document.getElementById('kmlCanvas');
-  const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||800;canvas.width=W;
-  const dark=document.documentElement.getAttribute('data-theme')==='dark';
-  ctx.fillStyle=dark?'#08090f':'#f0f2f8';ctx.fillRect(0,0,W,canvas.height);
-  if(!blockPts||blockPts.length<2){return;}
-  const xs=blockPts.map(p=>p.bx),zs=blockPts.map(p=>p.bz);
-  const mnX=Math.min(...xs),mxX=Math.max(...xs),mnZ=Math.min(...zs),mxZ=Math.max(...zs);
-  const pad=42,rX=mxX-mnX||1,rZ=mxZ-mnZ||1;
-  const sc=Math.min((W-pad*2)/rX,(canvas.height-pad*2)/rZ);
-  const toC=(bx,bz)=>({cx:pad+(bx-mnX)*sc,cy:pad+(bz-mnZ)*sc});
-  // Dot grid
-  ctx.fillStyle=dark?'rgba(255,255,255,.025)':'rgba(0,0,0,.05)';
-  const gs=Math.max(1,Math.round(38/sc));
-  for(let gx=0;gx<=rX;gx+=gs)for(let gz=0;gz<=rZ;gz+=gs){const{cx,cy}=toC(mnX+gx,mnZ+gz);ctx.fillRect(cx,cy,1,1);}
-  // Track line
-  const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#f5a623';
-  ctx.shadowColor=acc;ctx.shadowBlur=5;ctx.strokeStyle=acc;
-  ctx.lineWidth=Math.max(1.5,sc*.65);ctx.lineJoin='round';ctx.beginPath();
-  const{cx:sx0,cy:sz0}=toC(blockPts[0].bx,blockPts[0].bz);ctx.moveTo(sx0,sz0);
-  for(let i=1;i<blockPts.length;i++){const{cx,cy}=toC(blockPts[i].bx,blockPts[i].bz);ctx.lineTo(cx,cy);}
-  ctx.stroke();ctx.shadowBlur=0;
-  // Checkpoints
-  ctx.fillStyle='rgba(57,200,224,.85)';
-  for(const cp of cps){const{cx,cy}=toC(cp.bx,cp.bz);ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();}
-  // Start dot
-  const{cx:sc2,cy:sy}=toC(blockPts[0].bx,blockPts[0].bz);
-  ctx.shadowBlur=10;ctx.shadowColor='#3dd68c';ctx.fillStyle='#3dd68c';
-  ctx.beginPath();ctx.arc(sc2,sy,5.5,0,Math.PI*2);ctx.fill();
-  // Finish dot
-  const{cx:fc,cy:fy}=toC(blockPts[blockPts.length-1].bx,blockPts[blockPts.length-1].bz);
-  ctx.shadowColor='#e04040';ctx.fillStyle='#e04040';
-  ctx.beginPath();ctx.arc(fc,fy,5.5,0,Math.PI*2);ctx.fill();
-  ctx.shadowBlur=0;
-  // Labels
-  ctx.font='10px "JetBrains Mono",monospace';
-  ctx.fillStyle='#3dd68c';ctx.fillText('START',sc2+8,sy+3);
-  ctx.fillStyle='#e04040';ctx.fillText('FINISH',fc+8,fy+3);
-  // Legend
-  ctx.fillStyle='rgba(57,200,224,.8)';ctx.beginPath();ctx.arc(pad+4,canvas.height-17,3,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=dark?'rgba(255,255,255,.22)':'rgba(0,0,0,.28)';
-  ctx.fillText('CHECKPOINT',pad+11,canvas.height-13);
-  document.getElementById('cvInfo').textContent=
-    `${Math.round(rX/CS)}×${Math.round(rZ/CS)} blocks · ${(Math.round(rX/CS)*20/1000).toFixed(1)}×${(Math.round(rZ/CS)*20/1000).toFixed(1)} km`;
+  const canvas=document.getElementById('kmlCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||800;canvas.width=W;
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=dark?'#08090f':'#f0f2f8';ctx.fillRect(0,0,W,canvas.height);
+  if(!blockPts||blockPts.length<2){return;}
+  const xs=blockPts.map(p=>p.bx),zs=blockPts.map(p=>p.bz);
+  const mnX=Math.min(...xs),mxX=Math.max(...xs),mnZ=Math.min(...zs),mxZ=Math.max(...zs);
+  const pad=42,rX=mxX-mnX||1,rZ=mxZ-mnZ||1;
+  const sc=Math.min((W-pad*2)/rX,(canvas.height-pad*2)/rZ);
+  const toC=(bx,bz)=>({cx:pad+(bx-mnX)*sc,cy:pad+(bz-mnZ)*sc});
+  // Dot grid
+  ctx.fillStyle=dark?'rgba(255,255,255,.025)':'rgba(0,0,0,.05)';
+  const gs=Math.max(1,Math.round(38/sc));
+  for(let gx=0;gx<=rX;gx+=gs)for(let gz=0;gz<=rZ;gz+=gs){const{cx,cy}=toC(mnX+gx,mnZ+gz);ctx.fillRect(cx,cy,1,1);}
+  // Track line
+  const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#f5a623';
+  ctx.shadowColor=acc;ctx.shadowBlur=5;ctx.strokeStyle=acc;
+  ctx.lineWidth=Math.max(1.5,sc*.65);ctx.lineJoin='round';ctx.beginPath();
+  const{cx:sx0,cy:sz0}=toC(blockPts[0].bx,blockPts[0].bz);ctx.moveTo(sx0,sz0);
+  for(let i=1;i<blockPts.length;i++){const{cx,cy}=toC(blockPts[i].bx,blockPts[i].bz);ctx.lineTo(cx,cy);}
+  ctx.stroke();ctx.shadowBlur=0;
+  // Checkpoints
+  ctx.fillStyle='rgba(57,200,224,.85)';
+  for(const cp of cps){const{cx,cy}=toC(cp.bx,cp.bz);ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();}
+  // Start dot
+  const{cx:sc2,cy:sy}=toC(blockPts[0].bx,blockPts[0].bz);
+  ctx.shadowBlur=10;ctx.shadowColor='#3dd68c';ctx.fillStyle='#3dd68c';
+  ctx.beginPath();ctx.arc(sc2,sy,5.5,0,Math.PI*2);ctx.fill();
+  // Finish dot
+  const{cx:fc,cy:fy}=toC(blockPts[blockPts.length-1].bx,blockPts[blockPts.length-1].bz);
+  ctx.shadowColor='#e04040';ctx.fillStyle='#e04040';
+  ctx.beginPath();ctx.arc(fc,fy,5.5,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  // Labels
+  ctx.font='10px "JetBrains Mono",monospace';
+  ctx.fillStyle='#3dd68c';ctx.fillText('START',sc2+8,sy+3);
+  ctx.fillStyle='#e04040';ctx.fillText('FINISH',fc+8,fy+3);
+  // Legend
+  ctx.fillStyle='rgba(57,200,224,.8)';ctx.beginPath();ctx.arc(pad+4,canvas.height-17,3,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=dark?'rgba(255,255,255,.22)':'rgba(0,0,0,.28)';
+  ctx.fillText('CHECKPOINT',pad+11,canvas.height-13);
+  document.getElementById('cvInfo').textContent=
+    `${Math.round(rX/CS)}×${Math.round(rZ/CS)} blocks · ${(Math.round(rX/CS)*20/1000).toFixed(1)}×${(Math.round(rZ/CS)*20/1000).toFixed(1)} km`;
 }
 
 async function generateKML(){
-  const btn=document.getElementById('kmlBtn');
-  btn.disabled=true;btn.textContent='⏳ Working…';
-  try{
-    const txt=document.getElementById('kmlInput').value.trim();
-    if(!txt){log('Paste or load a KML file first.','err');return;}
-    dbg('=== KML Generate ===');log('Parsing KML…','warn');
-    const coords=parseKML(txt);
-    let dist=0;
-    for(let i=1;i<coords.length;i++)dist+=haversineM(coords[i-1].lon,coords[i-1].lat,coords[i].lon,coords[i].lat);
-    let local=toLocal(coords);
-    if(document.getElementById('smoothPath').checked){
-      const tol=+document.getElementById('smoothTol').value||10;
-      const before=local.length;local=rdp(local,tol);
-      dbg(`RDP: ${before}→${local.length} pts (tol=${tol}m)`,'warn');
-    }
-    const ox=+document.getElementById('originX').value||500;
-    const oy=+document.getElementById('originY').value||0;
-    const oz=+document.getElementById('originZ').value||500;
-    const rw=+document.getElementById('roadWidth').value||1;
-    const thr=+document.getElementById('turnAngle').value||20;
-    const result=kmlPathToLines(local,ox,oy,oz,rw,thr);
-    _lastKMLResult=result;
-    setStat('A',coords.length);document.getElementById('slA').textContent='KML Points';
-    setStat('B',result.roadBlocks.toLocaleString());document.getElementById('slB').textContent='Road Blocks';
-    setStat('C',result.cps.length);document.getElementById('slC').textContent='Checkpoints';
-    setStat('D',(dist/1000).toFixed(2)+' km');document.getElementById('slD').textContent='Circuit Length';
-    drawKMLCanvas(result.blockPts,result.cps);
-    log('Compressing…','warn');
-    const code=await encodeTrack(result.lines,
-      document.getElementById('kmlTrackName').value||'My Circuit',
-      document.getElementById('kmlAuthor').value||'Builder');
-    emitCode(code);toast('Circuit generated!');
-  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
-  finally{btn.disabled=false;btn.textContent='⚡ Generate Circuit Code';}
+  const btn=document.getElementById('kmlBtn');
+  btn.disabled=true;btn.textContent='⏳ Working…';
+  try{
+    const txt=document.getElementById('kmlInput').value.trim();
+    if(!txt){log('Paste or load a KML file first.','err');return;}
+    dbg('=== KML Generate ===');log('Parsing KML…','warn');
+    const coords=parseKML(txt);
+    let dist=0;
+    for(let i=1;i<coords.length;i++)dist+=haversineM(coords[i-1].lon,coords[i-1].lat,coords[i].lon,coords[i].lat);
+    let local=toLocal(coords);
+    if(document.getElementById('smoothPath').checked){
+      const tol=+document.getElementById('smoothTol').value||10;
+      const before=local.length;local=rdp(local,tol);
+      dbg(`RDP: ${before}→${local.length} pts (tol=${tol}m)`,'warn');
+    }
+    const ox=+document.getElementById('originX').value||500;
+    const oy=+document.getElementById('originY').value||0;
+    const oz=+document.getElementById('originZ').value||500;
+    const rw=+document.getElementById('roadWidth').value||1;
+    const thr=+document.getElementById('turnAngle').value||20;
+    const result=kmlPathToLines(local,ox,oy,oz,rw,thr);
+    _lastKMLResult=result;
+    setStat('A',coords.length);document.getElementById('slA').textContent='KML Points';
+    setStat('B',result.roadBlocks.toLocaleString());document.getElementById('slB').textContent='Road Blocks';
+    setStat('C',result.cps.length);document.getElementById('slC').textContent='Checkpoints';
+    setStat('D',(dist/1000).toFixed(2)+' km');document.getElementById('slD').textContent='Circuit Length';
+    drawKMLCanvas(result.blockPts,result.cps);
+    log('Compressing…','warn');
+    const code=await encodeTrack(result.lines,
+      document.getElementById('kmlTrackName').value||'My Circuit',
+      document.getElementById('kmlAuthor').value||'Builder');
+    emitCode(code);toast('Circuit generated!');
+  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
+  finally{btn.disabled=false;btn.textContent='⚡ Generate Circuit Code';}
 }
 
 // KML file drag/drop
@@ -935,134 +980,134 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])loadKMLFile(e.dataTransfer.files[0]);});
 fi.addEventListener('change',()=>{if(fi.files[0])loadKMLFile(fi.files[0]);});
 function loadKMLFile(f){
-  const r=new FileReader();
-  r.onload=ev=>{document.getElementById('kmlInput').value=ev.target.result;log('File loaded: '+f.name,'ok');toast('Loaded '+f.name);};
-  r.readAsText(f);
+  const r=new FileReader();
+  r.onload=ev=>{document.getElementById('kmlInput').value=ev.target.result;log('File loaded: '+f.name,'ok');toast('Loaded '+f.name);};
+  r.readAsText(f);
 }
 
 // ══════════════════════════════════════════════════
 // SHAPE BUILDER
 // ══════════════════════════════════════════════════
 function line3D(x1,y1,z1,x2,y2,z2){
-  const pts=[],dx=x2-x1,dy=y2-y1,dz=z2-z1;
-  const ax=Math.abs(dx),ay=Math.abs(dy),az=Math.abs(dz);
-  const sx=dx>0?1:-1,sy=dy>0?1:-1,sz=dz>0?1:-1;
-  let x=x1,y=y1,z=z1;
-  if(ax>=ay&&ax>=az){
-    let yd=ay-ax/2,zd=az-ax/2;
-    for(;;){pts.push({x,y,z});if(x===x2)return pts;x+=sx;if(yd>=0){y+=sy;yd-=ax;}yd+=ay;if(zd>=0){z+=sz;zd-=ax;}zd+=az;}
-  }else if(ay>=ax&&ay>=az){
-    let xd=ax-ay/2,zd=az-ay/2;
-    for(;;){pts.push({x,y,z});if(y===y2)return pts;y+=sy;if(xd>=0){x+=sx;xd-=ay;}xd+=ax;if(zd>=0){z+=sz;zd-=ay;}zd+=az;}
-  }else{
-    let xd=ax-az/2,yd=ay-az/2;
-    for(;;){pts.push({x,y,z});if(z===z2)return pts;z+=sz;if(xd>=0){x+=sx;xd-=az;}xd+=ax;if(yd>=0){y+=sy;yd-=az;}yd+=ay;}
-  }
+  const pts=[],dx=x2-x1,dy=y2-y1,dz=z2-z1;
+  const ax=Math.abs(dx),ay=Math.abs(dy),az=Math.abs(dz);
+  const sx=dx>0?1:-1,sy=dy>0?1:-1,sz=dz>0?1:-1;
+  let x=x1,y=y1,z=z1;
+  if(ax>=ay&&ax>=az){
+    let yd=ay-ax/2,zd=az-ax/2;
+    for(;;){pts.push({x,y,z});if(x===x2)return pts;x+=sx;if(yd>=0){y+=sy;yd-=ax;}yd+=ay;if(zd>=0){z+=sz;zd-=ax;}zd+=az;}
+  }else if(ay>=ax&&ay>=az){
+    let xd=ax-ay/2,zd=az-ay/2;
+    for(;;){pts.push({x,y,z});if(y===y2)return pts;y+=sy;if(xd>=0){x+=sx;xd-=ay;}xd+=ax;if(zd>=0){z+=sz;zd-=ay;}zd+=az;}
+  }else{
+    let xd=ax-az/2,yd=ay-az/2;
+    for(;;){pts.push({x,y,z});if(z===z2)return pts;z+=sz;if(xd>=0){x+=sx;xd-=az;}xd+=ax;if(yd>=0){y+=sy;yd-=az;}yd+=ay;}
+  }
 }
 
 function addShape(){
-  const type=document.getElementById('shapeType').value;
-  if(type==='line'){
-    gLines.push({id:+document.getElementById('lineId').value,rot:+document.getElementById('lineRot').value,
-      points:line3D(+document.getElementById('lsx').value,+document.getElementById('lsy').value,+document.getElementById('lsz').value,
-                    +document.getElementById('lex').value,+document.getElementById('ley').value,+document.getElementById('lez').value)});
-  }else if(type==='filledRect'){
-    const plane=document.getElementById('rectPlane').value,fixed=+document.getElementById('fixedCoord').value;
-    let mn1=+document.getElementById('rectMin1').value,mx1=+document.getElementById('rectMax1').value;
-    let mn2=+document.getElementById('rectMin2').value,mx2=+document.getElementById('rectMax2').value;
-    const id=+document.getElementById('rectId').value,rot=+document.getElementById('rectRot').value;
-    if(mn1>mx1)[mn1,mx1]=[mx1,mn1];if(mn2>mx2)[mn2,mx2]=[mx2,mn2];
-    if(plane==='xz')for(let z=mn2;z<=mx2;z++)gLines.push({id,rot,points:line3D(mn1,fixed,z,mx1,fixed,z)});
-    else if(plane==='xy')for(let y=mn2;y<=mx2;y++)gLines.push({id,rot,points:line3D(mn1,y,fixed,mx1,y,fixed)});
-    else for(let z=mn2;z<=mx2;z++)gLines.push({id,rot,points:line3D(fixed,mn1,z,fixed,mx1,z)});
-  }else if(type==='hollowCube'){
-    let[mnX,mnY,mnZ]=[+document.getElementById('hcMinX').value,+document.getElementById('hcMinY').value,+document.getElementById('hcMinZ').value];
-    let[mxX,mxY,mxZ]=[+document.getElementById('hcMaxX').value,+document.getElementById('hcMaxY').value,+document.getElementById('hcMaxZ').value];
-    if(mnX>mxX)[mnX,mxX]=[mxX,mnX];if(mnY>mxY)[mnY,mxY]=[mxY,mnY];if(mnZ>mxZ)[mnZ,mxZ]=[mxZ,mnZ];
-    const id=+document.getElementById('hcId').value,rot=+document.getElementById('hcRot').value;
-    for(let z=mnZ;z<=mxZ;z++){gLines.push({id,rot,points:line3D(mnX,mnY,z,mxX,mnY,z)});gLines.push({id,rot,points:line3D(mnX,mxY,z,mxX,mxY,z)});}
-    for(let y=mnY;y<=mxY;y++){gLines.push({id,rot,points:line3D(mnX,y,mnZ,mxX,y,mnZ)});gLines.push({id,rot,points:line3D(mnX,y,mxZ,mxX,y,mxZ)});}
-    for(let z=mnZ;z<=mxZ;z++){gLines.push({id,rot,points:line3D(mnX,mnY,z,mnX,mxY,z)});gLines.push({id,rot,points:line3D(mxX,mnY,z,mxX,mxY,z)});}
-  }else{
-    let[mnX,mnY,mnZ]=[+document.getElementById('fcMinX').value,+document.getElementById('fcMinY').value,+document.getElementById('fcMinZ').value];
-    let[mxX,mxY,mxZ]=[+document.getElementById('fcMaxX').value,+document.getElementById('fcMaxY').value,+document.getElementById('fcMaxZ').value];
-    if(mnX>mxX)[mnX,mxX]=[mxX,mnX];if(mnY>mxY)[mnY,mxY]=[mxY,mnY];if(mnZ>mxZ)[mnZ,mxZ]=[mxZ,mnZ];
-    const id=+document.getElementById('fcId').value,rot=+document.getElementById('fcRot').value;
-    for(let y=mnY;y<=mxY;y++)for(let z=mnZ;z<=mxZ;z++)gLines.push({id,rot,points:line3D(mnX,y,z,mxX,y,z)});
-  }
-  refreshShapeUI();toast('Shape added');
+  const type=document.getElementById('shapeType').value;
+  if(type==='line'){
+    gLines.push({id:+document.getElementById('lineId').value,rot:+document.getElementById('lineRot').value,
+      points:line3D(+document.getElementById('lsx').value,+document.getElementById('lsy').value,+document.getElementById('lsz').value,
+                    +document.getElementById('lex').value,+document.getElementById('ley').value,+document.getElementById('lez').value)});
+  }else if(type==='filledRect'){
+    const plane=document.getElementById('rectPlane').value,fixed=+document.getElementById('fixedCoord').value;
+    let mn1=+document.getElementById('rectMin1').value,mx1=+document.getElementById('rectMax1').value;
+    let mn2=+document.getElementById('rectMin2').value,mx2=+document.getElementById('rectMax2').value;
+    const id=+document.getElementById('rectId').value,rot=+document.getElementById('rectRot').value;
+    if(mn1>mx1)[mn1,mx1]=[mx1,mn1];if(mn2>mx2)[mn2,mx2]=[mx2,mn2];
+    if(plane==='xz')for(let z=mn2;z<=mx2;z++)gLines.push({id,rot,points:line3D(mn1,fixed,z,mx1,fixed,z)});
+    else if(plane==='xy')for(let y=mn2;y<=mx2;y++)gLines.push({id,rot,points:line3D(mn1,y,fixed,mx1,y,fixed)});
+    else for(let z=mn2;z<=mx2;z++)gLines.push({id,rot,points:line3D(fixed,mn1,z,fixed,mx1,z)});
+  }else if(type==='hollowCube'){
+    let[mnX,mnY,mnZ]=[+document.getElementById('hcMinX').value,+document.getElementById('hcMinY').value,+document.getElementById('hcMinZ').value];
+    let[mxX,mxY,mxZ]=[+document.getElementById('hcMaxX').value,+document.getElementById('hcMaxY').value,+document.getElementById('hcMaxZ').value];
+    if(mnX>mxX)[mnX,mxX]=[mxX,mnX];if(mnY>mxY)[mnY,mxY]=[mxY,mnY];if(mnZ>mxZ)[mnZ,mxZ]=[mxZ,mnZ];
+    const id=+document.getElementById('hcId').value,rot=+document.getElementById('hcRot').value;
+    for(let z=mnZ;z<=mxZ;z++){gLines.push({id,rot,points:line3D(mnX,mnY,z,mxX,mnY,z)});gLines.push({id,rot,points:line3D(mnX,mxY,z,mxX,mxY,z)});}
+    for(let y=mnY;y<=mxY;y++){gLines.push({id,rot,points:line3D(mnX,y,mnZ,mxX,y,mnZ)});gLines.push({id,rot,points:line3D(mnX,y,mxZ,mxX,y,mxZ)});}
+    for(let z=mnZ;z<=mxZ;z++){gLines.push({id,rot,points:line3D(mnX,mnY,z,mnX,mxY,z)});gLines.push({id,rot,points:line3D(mxX,mnY,z,mxX,mxY,z)});}
+  }else{
+    let[mnX,mnY,mnZ]=[+document.getElementById('fcMinX').value,+document.getElementById('fcMinY').value,+document.getElementById('fcMinZ').value];
+    let[mxX,mxY,mxZ]=[+document.getElementById('fcMaxX').value,+document.getElementById('fcMaxY').value,+document.getElementById('fcMaxZ').value];
+    if(mnX>mxX)[mnX,mxX]=[mxX,mnX];if(mnY>mxY)[mnY,mxY]=[mxY,mnY];if(mnZ>mxZ)[mnZ,mxZ]=[mxZ,mnZ];
+    const id=+document.getElementById('fcId').value,rot=+document.getElementById('fcRot').value;
+    for(let y=mnY;y<=mxY;y++)for(let z=mnZ;z<=mxZ;z++)gLines.push({id,rot,points:line3D(mnX,y,z,mxX,y,z)});
+  }
+  refreshShapeUI();toast('Shape added');
 }
 
 function removeShape(i){gLines.splice(i,1);refreshShapeUI();}
 function clearLines(){gLines=[];refreshShapeUI();toast('Cleared');}
 
 function refreshShapeUI(){
-  const total=gLines.reduce((s,l)=>s+l.points.length,0);
-  const ids=new Set(gLines.map(l=>l.id));
-  if(gMode==='shape'){setStat('A',gLines.length);setStat('B',total.toLocaleString());setStat('C',ids.size);}
-  const list=document.getElementById('linesList');
-  if(!gLines.length){
-    list.innerHTML='<div class="empty-st"><div>◈</div><p>No shapes yet.<br>Add shapes above to build your track.</p></div>';
-    return;
-  }
-  list.innerHTML=gLines.map((l,i)=>`
-    <div class="li">
-      <div class="id-badge">ID&nbsp;${l.id}</div>
-      <div class="li-info">
-        ${ID_NAMES[l.id]?`<div class="li-name">${ID_NAMES[l.id]}</div>`:''}
-        <div class="li-meta">${l.points.length} block${l.points.length!==1?'s':''}</div>
-        <div class="li-coords">(${l.points[0].x},${l.points[0].y},${l.points[0].z}) → (${l.points[l.points.length-1].x},${l.points[l.points.length-1].y},${l.points[l.points.length-1].z})</div>
-      </div>
-      <button class="btn btn-del btn-sm" onclick="removeShape(${i})">✕</button>
-    </div>`).join('');
+  const total=gLines.reduce((s,l)=>s+l.points.length,0);
+  const ids=new Set(gLines.map(l=>l.id));
+  if(gMode==='shape'){setStat('A',gLines.length);setStat('B',total.toLocaleString());setStat('C',ids.size);}
+  const list=document.getElementById('linesList');
+  if(!gLines.length){
+    list.innerHTML='<div class="empty-st"><div>◈</div><p>No shapes yet.<br>Add shapes above to build your track.</p></div>';
+    return;
+  }
+  list.innerHTML=gLines.map((l,i)=>`
+    <div class="li">
+      <div class="id-badge">ID&nbsp;${l.id}</div>
+      <div class="li-info">
+        ${ID_NAMES[l.id]?`<div class="li-name">${ID_NAMES[l.id]}</div>`:''}
+        <div class="li-meta">${l.points.length} block${l.points.length!==1?'s':''}</div>
+        <div class="li-coords">(${l.points[0].x},${l.points[0].y},${l.points[0].z}) → (${l.points[l.points.length-1].x},${l.points[l.points.length-1].y},${l.points[l.points.length-1].z})</div>
+      </div>
+      <button class="btn btn-del btn-sm" onclick="removeShape(${i})">✕</button>
+    </div>`).join('');
 }
 
 async function generateShape(){
-  if(!gLines.length){toast('Add at least one shape first');return;}
-  log('Compressing…','warn');dbg('=== Shape Generate ===');
-  try{
-    const code=await encodeTrack(gLines,
-      document.getElementById('shapeTrackName').value||'My Track',
-      document.getElementById('shapeAuthor').value||'Builder');
-    emitCode(code);
-    const total=gLines.reduce((s,l)=>s+l.points.length,0);
-    setStat('A',gLines.length);setStat('B',total.toLocaleString());setStat('C',new Set(gLines.map(l=>l.id)).size);
-    toast('Track generated!');
-  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
+  if(!gLines.length){toast('Add at least one shape first');return;}
+  log('Compressing…','warn');dbg('=== Shape Generate ===');
+  try{
+    const code=await encodeTrack(gLines,
+      document.getElementById('shapeTrackName').value||'My Track',
+      document.getElementById('shapeAuthor').value||'Builder');
+    emitCode(code);
+    const total=gLines.reduce((s,l)=>s+l.points.length,0);
+    setStat('A',gLines.length);setStat('B',total.toLocaleString());setStat('C',new Set(gLines.map(l=>l.id)).size);
+    toast('Track generated!');
+  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
 }
 
 function generateTestTrack(){
-  gLines=[];
-  const mn=+document.getElementById('minId').value;
-  const mx=+document.getElementById('maxId').value;
-  gLines.push({id:92,points:line3D(0,0,0,0,0,0),rot:0});
-  let pos=0;
-  for(let i=mn;i<=mx;i++){pos+=20;gLines.push({id:i,points:line3D(pos,0,0,pos,0,0),rot:0});}
-  gLines.push({id:76,points:line3D(pos+20,0,0,pos+20,0,0),rot:0});
-  refreshShapeUI();
-  toast(`ID test track: IDs ${mn}–${mx}`);
+  gLines=[];
+  const mn=+document.getElementById('minId').value;
+  const mx=+document.getElementById('maxId').value;
+  gLines.push({id:92,points:line3D(0,0,0,0,0,0),rot:0});
+  let pos=0;
+  for(let i=mn;i<=mx;i++){pos+=20;gLines.push({id:i,points:line3D(pos,0,0,pos,0,0),rot:0});}
+  gLines.push({id:76,points:line3D(pos+20,0,0,pos+20,0,0),rot:0});
+  refreshShapeUI();
+  toast(`ID test track: IDs ${mn}–${mx}`);
 }
 
 function exportJSON(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(gLines,null,2)],{type:'application/json'}));
-  a.download='shapes.json';a.click();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(gLines,null,2)],{type:'application/json'}));
+  a.download='shapes.json';a.click();
 }
 
 // Shape form switcher
 document.getElementById('shapeType').addEventListener('change',()=>{
-  document.querySelectorAll('.sf').forEach(f=>f.style.display='none');
-  document.getElementById('form-'+document.getElementById('shapeType').value).style.display='';
-  if(document.getElementById('shapeType').value==='filledRect')syncRectLabels();
+  document.querySelectorAll('.sf').forEach(f=>f.style.display='none');
+  document.getElementById('form-'+document.getElementById('shapeType').value).style.display='';
+  if(document.getElementById('shapeType').value==='filledRect')syncRectLabels();
 });
 document.getElementById('rectPlane').addEventListener('change',syncRectLabels);
 function syncRectLabels(){
-  const p=document.getElementById('rectPlane').value;
-  const M={xz:['Fixed Y','Min X','Max X','Min Z','Max Z'],xy:['Fixed Z','Min X','Max X','Min Y','Max Y'],yz:['Fixed X','Min Y','Max Y','Min Z','Max Z']};
-  const[fl,m1,x1,m2,x2]=M[p];
-  document.getElementById('fixedLabel').textContent=fl;
-  document.getElementById('min1Label').textContent=m1;document.getElementById('max1Label').textContent=x1;
-  document.getElementById('min2Label').textContent=m2;document.getElementById('max2Label').textContent=x2;
+  const p=document.getElementById('rectPlane').value;
+  const M={xz:['Fixed Y','Min X','Max X','Min Z','Max Z'],xy:['Fixed Z','Min X','Max X','Min Y','Max Y'],yz:['Fixed X','Min Y','Max Y','Min Z','Max Z']};
+  const[fl,m1,x1,m2,x2]=M[p];
+  document.getElementById('fixedLabel').textContent=fl;
+  document.getElementById('min1Label').textContent=m1;document.getElementById('max1Label').textContent=x1;
+  document.getElementById('min2Label').textContent=m2;document.getElementById('max2Label').textContent=x2;
 }
 
 // ══════════════════════════════════════════════════
@@ -1073,110 +1118,316 @@ const pCtx=pCvs.getContext('2d');
 const BIN_CLR=['#1a2eaa','#7a7e96','#d8ddf0']; // dark / mid / light display colours
 
 function processUpload(){
-  const file=document.getElementById('imgUpload').files[0];
-  if(!file){toast('Choose an image file first');return;}
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    const img=new Image();
-    img.onload=()=>{
-      const res=Math.max(8,Math.min(256,+document.getElementById('resValue').value||64));
-      const keep=document.getElementById('preserveAspect').checked;
-      let tw,th;
-      if(keep){
-        if(img.width>=img.height){tw=res;th=Math.round(img.height*(res/img.width));}
-        else{th=res;tw=Math.round(img.width*(res/img.height));}
-      }else{tw=th=res;}
-      tw=Math.max(2,Math.min(256,tw));th=Math.max(2,Math.min(256,th));
-      // Downsample
-      const off=document.createElement('canvas');off.width=tw;off.height=th;
-      const oc=off.getContext('2d');oc.imageSmoothingEnabled=true;oc.drawImage(img,0,0,tw,th);
-      const imgd=oc.getImageData(0,0,tw,th);
-      // Compute luminance
-      const lum=new Float32Array(tw*th);
-      for(let i=0;i<tw*th;i++){
-        const r=imgd.data[i*4],g=imgd.data[i*4+1],b=imgd.data[i*4+2],a=imgd.data[i*4+3];
-        const al=a/255,rr=r*al+255*(1-al),gg=g*al+255*(1-al),bb=b*al+255*(1-al);
-        lum[i]=0.2126*rr+0.7152*gg+0.0722*bb;
-      }
-      // 3-bin split at 33rd and 66th percentile
-      const sorted=Float32Array.from(lum).sort();
-      const t1=sorted[Math.floor(sorted.length/3)];
-      const t2=sorted[Math.floor(2*sorted.length/3)];
-      const pixels=[];
-      for(let y=0;y<th;y++){
-        const row=[];
-        for(let x=0;x<tw;x++){const l=lum[y*tw+x];row.push(l<t1?0:l<t2?1:2);}
-        pixels.push(row);
-      }
-      gPixels={w:tw,h:th,pixels};
-      document.getElementById('pixPanel').style.display='';
-      document.getElementById('pixCount').textContent=(tw*th).toLocaleString();
-      document.getElementById('pixW').textContent=tw;
-      document.getElementById('pixH').textContent=th;
-      if(gMode==='pixel'){setStat('A',tw*th);setStat('B',tw);setStat('C',th);}
-      drawPixelPreview();
-      toast(`Preview: ${tw}×${th} pixels, 3 shades`);
-    };
-    img.src=ev.target.result;
-  };
-  reader.readAsDataURL(file);
+  const file=document.getElementById('imgUpload').files[0];
+  if(!file){toast('Choose an image file first');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const res=Math.max(8,Math.min(256,+document.getElementById('resValue').value||64));
+      const keep=document.getElementById('preserveAspect').checked;
+      let tw,th;
+      if(keep){
+        if(img.width>=img.height){tw=res;th=Math.round(img.height*(res/img.width));}
+        else{th=res;tw=Math.round(img.width*(res/img.height));}
+      }else{tw=th=res;}
+      tw=Math.max(2,Math.min(256,tw));th=Math.max(2,Math.min(256,th));
+      // Downsample
+      const off=document.createElement('canvas');off.width=tw;off.height=th;
+      const oc=off.getContext('2d');oc.imageSmoothingEnabled=true;oc.drawImage(img,0,0,tw,th);
+      const imgd=oc.getImageData(0,0,tw,th);
+      // Compute luminance
+      const lum=new Float32Array(tw*th);
+      for(let i=0;i<tw*th;i++){
+        const r=imgd.data[i*4],g=imgd.data[i*4+1],b=imgd.data[i*4+2],a=imgd.data[i*4+3];
+        const al=a/255,rr=r*al+255*(1-al),gg=g*al+255*(1-al),bb=b*al+255*(1-al);
+        lum[i]=0.2126*rr+0.7152*gg+0.0722*bb;
+      }
+      // 3-bin split at 33rd and 66th percentile
+      const sorted=Float32Array.from(lum).sort();
+      const t1=sorted[Math.floor(sorted.length/3)];
+      const t2=sorted[Math.floor(2*sorted.length/3)];
+      const pixels=[];
+      for(let y=0;y<th;y++){
+        const row=[];
+        for(let x=0;x<tw;x++){const l=lum[y*tw+x];row.push(l<t1?0:l<t2?1:2);}
+        pixels.push(row);
+      }
+      gPixels={w:tw,h:th,pixels};
+      document.getElementById('pixPanel').style.display='';
+      document.getElementById('pixCount').textContent=(tw*th).toLocaleString();
+      document.getElementById('pixW').textContent=tw;
+      document.getElementById('pixH').textContent=th;
+      if(gMode==='pixel'){setStat('A',tw*th);setStat('B',tw);setStat('C',th);}
+      drawPixelPreview();
+      toast(`Preview: ${tw}×${th} pixels, 3 shades`);
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function drawPixelPreview(){
-  if(!gPixels){pCtx.clearRect(0,0,270,270);return;}
-  const{w,h,pixels}=gPixels;
-  const scale=Math.min(270/w,270/h);
-  const pw=Math.floor(scale*w),ph=Math.floor(scale*h);
-  const dark=document.documentElement.getAttribute('data-theme')==='dark';
-  pCtx.fillStyle=dark?'#08090f':'#f0f2f8';pCtx.fillRect(0,0,270,270);
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      pCtx.fillStyle=BIN_CLR[pixels[y][x]];
-      pCtx.fillRect(
-        Math.round(x*scale+(270-pw)/2),
-        Math.round(y*scale+(270-ph)/2),
-        Math.ceil(scale),Math.ceil(scale)
-      );
-    }
-  }
+  if(!gPixels){pCtx.clearRect(0,0,270,270);return;}
+  const{w,h,pixels}=gPixels;
+  const scale=Math.min(270/w,270/h);
+  const pw=Math.floor(scale*w),ph=Math.floor(scale*h);
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  pCtx.fillStyle=dark?'#08090f':'#f0f2f8';pCtx.fillRect(0,0,270,270);
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      pCtx.fillStyle=BIN_CLR[pixels[y][x]];
+      pCtx.fillRect(
+        Math.round(x*scale+(270-pw)/2),
+        Math.round(y*scale+(270-ph)/2),
+        Math.ceil(scale),Math.ceil(scale)
+      );
+    }
+  }
 }
 
 function buildPixelLines(){
-  if(!gPixels)return null;
-  const sp=+document.getElementById('pixelSpacing').value||1;
-  const use4x=document.getElementById('use4x').checked,bs=use4x?4:1;
-  const ox=+document.getElementById('offsetX').value||0;
-  const oy=+document.getElementById('offsetY').value||0;
-  const oz=+document.getElementById('offsetZ').value||0;
-  const ids=[
-    +document.getElementById('idBin0').value||5,
-    +document.getElementById('idBin1').value||25,
-    +document.getElementById('idBin2').value||52,
-  ];
-  const{w,h,pixels}=gPixels;
-  const pxLines=[];
-  for(let py=0;py<h;py++)for(let px=0;px<w;px++){
-    const id=ids[pixels[py][px]];
-    const mx=ox+px*sp*bs,mz=oz+py*sp*bs;
-    for(let z=mz;z<mz+bs;z++)pxLines.push({id,rot:0,points:line3D(mx,oy,z,mx+(bs-1),oy,z)});
-  }
-  return pxLines;
+  if(!gPixels)return null;
+  const sp=+document.getElementById('pixelSpacing').value||1;
+  const use4x=document.getElementById('use4x').checked,bs=use4x?4:1;
+  const ox=+document.getElementById('offsetX').value||0;
+  const oy=+document.getElementById('offsetY').value||0;
+  const oz=+document.getElementById('offsetZ').value||0;
+  const ids=[
+    +document.getElementById('idBin0').value||5,
+    +document.getElementById('idBin1').value||25,
+    +document.getElementById('idBin2').value||52,
+  ];
+  const{w,h,pixels}=gPixels;
+  const pxLines=[];
+  for(let py=0;py<h;py++)for(let px=0;px<w;px++){
+    const id=ids[pixels[py][px]];
+    const mx=ox+px*sp*bs,mz=oz+py*sp*bs;
+    for(let z=mz;z<mz+bs;z++)pxLines.push({id,rot:0,points:line3D(mx,oy,z,mx+(bs-1),oy,z)});
+  }
+  return pxLines;
 }
 
 async function generatePixel(){
-  if(!gPixels){toast('Preview an image first (Step 1)');return;}
-  const pxLines=buildPixelLines();
-  if(!pxLines?.length){toast('No pixel data to generate');return;}
-  log('Compressing…','warn');dbg('=== Pixel Generate ===');
-  try{
-    const code=await encodeTrack(pxLines,
-      document.getElementById('pixelTrackName').value||'Pixel Art',
-      document.getElementById('pixelAuthor').value||'Builder');
-    emitCode(code);
-    setStat('A',gPixels.w*gPixels.h);setStat('B',gPixels.w);setStat('C',gPixels.h);
-    toast('Pixel art track generated!');
-  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
+  if(!gPixels){toast('Preview an image first (Step 1)');return;}
+  const pxLines=buildPixelLines();
+  if(!pxLines?.length){toast('No pixel data to generate');return;}
+  log('Compressing…','warn');dbg('=== Pixel Generate ===');
+  try{
+    const code=await encodeTrack(pxLines,
+      document.getElementById('pixelTrackName').value||'Pixel Art',
+      document.getElementById('pixelAuthor').value||'Builder');
+    emitCode(code);
+    setStat('A',gPixels.w*gPixels.h);setStat('B',gPixels.w);setStat('C',gPixels.h);
+    toast('Pixel art track generated!');
+  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
 }
+
+// ══════════════════════════════════════════════════
+// HILL INSERTER — verified from 4-direction test track
+// ══════════════════════════════════════════════════
+//
+// CONFIRMED block layout (travel -Z, starting from flat at z=0):
+//   z= -8  y=0  ID145 rot=0   ← entry transition (0%→slope), 4-unit footprint
+//   z=-16  y=2  ID146 rot=2   ← main 45° ramp, 8-unit footprint, y+2
+//   [PEAK at z=-20, y=4]
+//   z=-28  y=2  ID146 rot=0   ← descending ramp (mirror)
+//   z=-36  y=0  ID145 rot=2   ← exit transition (slope→0%)
+//
+// CONFIRMED rotation table (all 4 directions, directly from decode):
+//   Travel -Z:  ID145 rot=0, ID146 rot=2   (desc: ID146 rot=0, ID145 rot=2)
+//   Travel +Z:  ID145 rot=2, ID146 rot=0   (desc: ID146 rot=2, ID145 rot=0)
+//   Travel -X:  ID145 rot=1, ID146 rot=3   (desc: ID146 rot=1, ID145 rot=3)
+//   Travel +X:  ID145 rot=3, ID146 rot=1   (desc: ID146 rot=3, ID145 rot=1)
+//
+// Pattern: ascending ID145 rot = travel cardinal (0=-Z,1=-X,2=+Z,3=+X)
+//          ascending ID146 rot = (ID145 rot + 2) % 4
+//          descending is the exact mirror: swap ID145↔ID146 rots
+//
+// Step sizes: ID145 = 8 coord units from start, ID146 = 8 more = 16 from start
+// Each coord unit = 5m real world → ID145 at 40m, ID146 at 80m, peak at 100m
+
+// Cardinal 0=angle 0°(+Z), 1=90°(+X), 2=180°(-Z), 3=270°(-X)
+// but we need travel direction, not compass angle
+// Angle→cardinal: 0°→+Z(idx2 below), 90°→+X(idx3), 180°→-Z(idx0), 270°→-X(idx1)
+const HILL_CARDINALS = [
+  // idx 0: travel -Z (angle 180°)
+  { label:'-Z', dx: 0, dz:-1,
+    asc145rot:0, asc146rot:2,
+    dsc146rot:0, dsc145rot:2 },
+  // idx 1: travel -X (angle 270°)
+  { label:'-X', dx:-1, dz: 0,
+    asc145rot:1, asc146rot:3,
+    dsc146rot:1, dsc145rot:3 },
+  // idx 2: travel +Z (angle 0°)
+  { label:'+Z', dx: 0, dz: 1,
+    asc145rot:2, asc146rot:0,
+    dsc146rot:2, dsc145rot:0 },
+  // idx 3: travel +X (angle 90°)
+  { label:'+X', dx: 1, dz: 0,
+    asc145rot:3, asc146rot:1,
+    dsc146rot:3, dsc145rot:1 },
+];
+
+// Angle 0°=+Z → cardinal idx 2; 90°=+X → idx 3; 180°=-Z → idx 0; 270°=-X → idx 1
+function angleToCardinal(deg) {
+  const norm = ((deg % 360) + 360) % 360;
+  // Map: 0°→+Z(2), 90°→+X(3), 180°→-Z(0), 270°→-X(1)
+  const snap = Math.round(norm / 90) % 4; // 0,1,2,3 for 0°,90°,180°,270°
+  return [2, 3, 0, 1][snap];
+}
+
+function syncHillAngle(val) {
+  const v = Math.max(0, Math.min(359, +val || 0));
+  document.getElementById('hillAngle').value = v;
+  document.getElementById('hillAngleTxt').value = v;
+  updateHillPreview(v);
+}
+function updateHillPreview(deg) {
+  const c = angleToCardinal(deg);
+  const h = HILL_CARDINALS[c];
+  const snapAngle = [180, 270, 0, 90][c]; // cardinal idx→angle
+  document.getElementById('hillRotInfo').innerHTML =
+    `Snapped to <b>${h.label}</b> (${snapAngle}°)<br>` +
+    `Ascend: ID145 rot=<b>${h.asc145rot}</b> → ID146 rot=<b>${h.asc146rot}</b><br>` +
+    `Descend: ID146 rot=<b>${h.dsc146rot}</b> → ID145 rot=<b>${h.dsc145rot}</b>`;
+  drawHillDiagram(deg, c);
+}
+
+function drawHillDiagram(deg, cardinal) {
+  const cvs = document.getElementById('hillCanvas');
+  const ctx = cvs.getContext('2d');
+  const W = 240, H = 160;
+  ctx.clearRect(0, 0, W, H);
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  ctx.fillStyle = dark ? '#161c2d' : '#f0f2f8';
+  ctx.fillRect(0, 0, W, H);
+  const acc = dark ? '#f5a623' : '#c87c08';
+  const dim = dark ? '#4e6080' : '#9090b0';
+  const grn = dark ? '#3dd68c' : '#1d9e5e';
+  const cyn = dark ? '#39c8e0' : '#1899b8';
+  const h = HILL_CARDINALS[cardinal];
+
+  // ── Compass (top half) ──────────────────
+  const cx = W/2, cy = 68;
+  ctx.strokeStyle = dark?'#1e2840':'#dde2ef'; ctx.lineWidth=1;
+  for(let a=0;a<360;a+=45){
+    const r=(a-90)*Math.PI/180;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(r)*52,cy+Math.sin(r)*52);ctx.stroke();
+  }
+  ctx.strokeStyle=dark?'#2a3a58':'#c4cce0';
+  ctx.beginPath();ctx.arc(cx,cy,52,0,Math.PI*2);ctx.stroke();
+  ctx.font='bold 8px "JetBrains Mono",monospace';
+  ctx.fillStyle=dim;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('+Z',cx,cy-63);ctx.fillText('-Z',cx,cy+63);
+  ctx.fillText('+X',cx+63,cy);ctx.fillText('-X',cx-63,cy);
+
+  // Dashed actual angle
+  const norm=((deg%360)+360)%360, snapDeg=cardinal*90;
+  if(Math.abs(norm-snapDeg)>2){
+    const rr=(norm-90)*Math.PI/180;
+    ctx.strokeStyle=dim;ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(rr)*44,cy+Math.sin(rr)*44);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // Solid snapped arrow
+  const sr=(snapDeg-90)*Math.PI/180;
+  const ax=cx+Math.cos(sr)*46,ay=cy+Math.sin(sr)*46;
+  ctx.shadowColor=acc;ctx.shadowBlur=8;
+  ctx.strokeStyle=acc;ctx.lineWidth=2.5;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ax,ay);ctx.stroke();
+  const hl=9,hr=Math.PI/6;
+  ctx.fillStyle=acc;ctx.beginPath();
+  ctx.moveTo(ax,ay);
+  ctx.lineTo(ax-hl*Math.cos(sr-hr),ay-hl*Math.sin(sr-hr));
+  ctx.lineTo(ax-hl*Math.cos(sr+hr),ay-hl*Math.sin(sr+hr));
+  ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle=acc;ctx.shadowColor=acc;ctx.shadowBlur=5;
+  ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+
+  // ── Cross-section profile (bottom half) ──
+  // Proportional to real units: entry=4, ramp=8, ramp=8, entry=4 = 24 total
+  const bY=H-16, bX=10, bW=W-20, sc=bW/24;
+  // Ground line
+  ctx.strokeStyle=dim;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(bX,bY);ctx.lineTo(bX+bW,bY);ctx.stroke();
+  // Filled profile
+  // Points: x in proportion to Z units, y scaled (max y=4 → 28px tall)
+  const Ys=28/4; // pixels per Y unit
+  const profile=[
+    [0,0],[4,0],[12,2],[12,2],[20,2],[24,0]
+  ];
+  ctx.fillStyle=dark?'rgba(245,166,35,.07)':'rgba(200,124,8,.07)';
+  ctx.beginPath();ctx.moveTo(bX,bY);
+  for(const[u,y]of profile)ctx.lineTo(bX+u*sc,bY-y*Ys);
+  ctx.lineTo(bX+bW,bY);ctx.closePath();ctx.fill();
+  // Outline
+  ctx.strokeStyle=acc;ctx.lineWidth=2;ctx.lineJoin='round';
+  ctx.beginPath();ctx.moveTo(bX,bY);
+  for(const[u,y]of profile)ctx.lineTo(bX+u*sc,bY-y*Ys);
+  ctx.lineTo(bX+bW,bY);ctx.stroke();
+  // Dividers
+  ctx.strokeStyle=dark?'rgba(255,255,255,.12)':'rgba(0,0,0,.1)';
+  ctx.lineWidth=1;ctx.setLineDash([2,2]);
+  for(const u of[4,12,20]){ctx.beginPath();ctx.moveTo(bX+u*sc,bY);ctx.lineTo(bX+u*sc,bY-50);ctx.stroke();}
+  ctx.setLineDash([]);
+  // Segment labels
+  ctx.font='7px "JetBrains Mono",monospace';ctx.textAlign='center';ctx.textBaseline='top';
+  const segs=[
+    {mid:2,  y:0,  label:`145\nr=${h.asc145rot}`, col:grn},
+    {mid:8,  y:2,  label:`146\nr=${h.asc146rot}`,  col:acc},
+    {mid:16, y:2,  label:`146\nr=${h.dsc146rot}`,  col:acc},
+    {mid:22, y:0,  label:`145\nr=${h.dsc145rot}`, col:grn},
+  ];
+  for(const s of segs){
+    const lx=bX+s.mid*sc, ly=bY-s.y*Ys-22;
+    ctx.fillStyle=s.col;
+    s.label.split('\n').forEach((ln,i)=>ctx.fillText(ln,lx,ly+i*9));
+  }
+  // Height annotation
+  ctx.fillStyle=cyn;ctx.textAlign='left';
+  ctx.fillText('y+4',bX+12*sc+3,bY-4*Ys);
+}
+
+function addHill() {
+  const deg   = +document.getElementById('hillAngleTxt').value || 0;
+  const bx    = +document.getElementById('hillX').value || 0;
+  const by    = +document.getElementById('hillY').value || 0;
+  const bz    = +document.getElementById('hillZ').value || 0;
+  const width = Math.max(1, +document.getElementById('hillWidth').value || 1);
+
+  const c = angleToCardinal(deg);
+  const h = HILL_CARDINALS[c];
+  const snapAngle = [180, 270, 0, 90][c];
+
+  // Width lanes spread perpendicular to the travel direction
+  const isZAxis = (h.dx === 0);
+  const halfW = Math.floor(width / 2);
+
+  for (let w = 0; w < width; w++) {
+    const wOff = (w - halfW) * 4;
+    const wx = bx + (isZAxis ? wOff : 0);
+    const wz = bz + (isZAxis ? 0 : wOff);
+
+    // Distances confirmed from 4-direction decode:
+    //   ID145 (entry)  at  8 units from base, y=+0
+    //   ID146 (ramp)   at 16 units from base, y=+2
+    //   ID146 (ramp)   at 24 units from base, y=+2  (descending mirror)
+    //   ID145 (entry)  at 32 units from base, y=+0  (exit)
+    gLines.push({ id:145, rot:h.asc145rot, points:[{ x:wx+h.dx*8,  y:by,   z:wz+h.dz*8  }] });
+    gLines.push({ id:146, rot:h.asc146rot, points:[{ x:wx+h.dx*16, y:by+2, z:wz+h.dz*16 }] });
+    gLines.push({ id:146, rot:h.dsc146rot, points:[{ x:wx+h.dx*24, y:by+2, z:wz+h.dz*24 }] });
+    gLines.push({ id:145, rot:h.dsc145rot, points:[{ x:wx+h.dx*32, y:by,   z:wz+h.dz*32 }] });
+  }
+
+  refreshShapeUI();
+  toast(`Hill added → ${h.label} (snapped to ${snapAngle}°), width ${width}`);
+  dbg(`Hill: dir=${h.label} rots=${h.asc145rot},${h.asc146rot},${h.dsc146rot},${h.dsc145rot} base=(${bx},${by},${bz}) w=${width}`, 'ok');
+}
+
+document.getElementById('tab-shape').addEventListener('click', () => {
+  setTimeout(() => updateHillPreview(+document.getElementById('hillAngleTxt').value || 0), 50);
+});
 
 // ══════════════════════════════════════════════════
 // INIT

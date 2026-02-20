@@ -303,8 +303,8 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
   <div class="step">
     <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Road settings</div></div>
     <div class="g2">
-      <div class="field" style="margin:0"><label>Origin X (blocks)</label><input type="number" id="originX" value="500"></div>
-      <div class="field" style="margin:0"><label>Origin Z (blocks)</label><input type="number" id="originZ" value="500"></div>
+      <div class="field" style="margin:0"><label>Origin X (blocks)</label><input type="number" id="originX" value="0"></div>
+      <div class="field" style="margin:0"><label>Origin Z (blocks)</label><input type="number" id="originZ" value="0"></div>
     </div>
     <div class="g2" style="margin-top:.4rem">
       <div class="field" style="margin:0"><label>Base height Y</label><input type="number" id="originY" value="0"></div>
@@ -314,17 +314,9 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
   <div class="step">
     <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Path options</div></div>
-    <div class="tog-row">
-      <label for="smoothPath">Smooth path (RDP algorithm)</label>
-      <input type="checkbox" id="smoothPath" checked>
-    </div>
-    <div class="field" style="margin-top:.5rem">
-      <label>Smoothing tolerance (metres)</label>
-      <input type="number" id="smoothTol" value="10" min="1" max="200">
-    </div>
     <div class="field">
       <label>Checkpoint turn angle (degrees)</label>
-      <input type="number" id="turnAngle" value="20" min="5" max="90">
+      <input type="number" id="turnAngle" value="30" min="5" max="90">
     </div>
     <div class="tog-row">
       <label for="useElevation">Use real elevation (Y axis)</label>
@@ -1009,37 +1001,52 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
           step(CS); flatDone+=CS;
         }
       } else {
-        // Flat first, then ramps descend
+        // ── DESCENDING: flat first, then ramps ──────────────────────────
+        // Decoded reference (+X travel, surface_y=4 at peak):
+        //   Last flat at x=32 (surface=4), cursor steps to x=36
+        //   ID146 at x=40 (centre), y=surface_y-2=2, rot=dsc146  ← slope first
+        //   ID145 at x=48 (centre), y=surface_y-4=0, rot=dsc145  ← exit transition
+        //   surface_y -= 4 → surface_y=0
         let flatDone=0;
         while(flatDone+CS<=flatHoriz+0.5){
           addFlat(cx, surface_y, cz, cardinal);
           step(CS); flatDone+=CS;
         }
         for(let r=0;r<nRamps;r++){
-          // Descending: surface drops from surface_y to surface_y-4
-          // ID145 stored y = surface_y (entry transition, flush with the flat before it)
-          addRamp(145, rots.dsc145, cx+stepX*4, surface_y,   cz+stepZ*4, cardinal);
-          step(8);
-          // ID146 stored y = surface_y-2 (midpoint of slope: surface_y → surface_y-4)
+          // ID146 first: the actual slope block, stored at midpoint of drop
           addRamp(146, rots.dsc146, cx+stepX*4, surface_y-2, cz+stepZ*4, cardinal);
+          step(8);
+          // ID145 second: the exit transition, stored at the new (lower) surface level
+          addRamp(145, rots.dsc145, cx+stepX*4, surface_y-4, cz+stepZ*4, cardinal);
           step(8);
           surface_y -= 4;
         }
       }
 
-      // Stitch any perpendicular gap (diagonal segments): fill from walk endpoint to b
+      // Stitch perpendicular gap (diagonal segments): fill from walk endpoint to b.
+      // Use line3D so the stitch itself is diagonal-capable.
       if(nRamps>0 && (cx!==b.bx||cz!==b.bz)){
+        const nx2=Math.abs(b.bx-cx)>=Math.abs(b.bz-cz)?0:1, nz2=nx2?0:1;
         const stitchLine=line3D(cx,surface_y,cz,b.bx,surface_y,b.bz);
-        for(const sp of stitchLine) addFlat(sp.x,sp.y,sp.z,cardinal);
+        for(const sp of stitchLine){
+          const slab=rw<=1?[sp]:line3D(sp.x-nx2*hW,sp.y,sp.z-nz2*hW,sp.x+nx2*fW,sp.y,sp.z+nz2*fW);
+          for(const s2 of slab){
+            const k=`${s2.x},${s2.y},${s2.z}`;
+            if(!flatSeen.has(k)){flatSeen.add(k);flatRoad.push({x:s2.x,y:s2.y,z:s2.z});}
+          }
+        }
       }
     }
   }
 
   // ── Checkpoint detection from pre-snap local coords ──────────────────
-  // Using `local` (before grid snap) preserves tight corners that collapse
-  // to the same grid cell after snapping and would be missed in `pts`.
-  // For each turn in local with angle >= thr, find the nearest snapped pts
-  // entry and mark it as a checkpoint (dedup by position).
+  // Uses local[] (full KML resolution) so tight corners snapped to the same
+  // grid cell aren't missed. Checkpoints are never placed near ramp modules:
+  // a ramp zone occupies nRamps×16 coord units — a checkpoint landing inside
+  // one would float in the air before the ramp reaches that height.
+  //
+  // For each detected corner, we check whether the nearest pts segment has any
+  // ramps. If so, we push the checkpoint PAST the ramp zone.
   const cpSeen=new Set();
   for(let i=1;i<local.length-1;i++){
     const prev=local[i-1], cur=local[i], next=local[i+1];
@@ -1047,20 +1054,52 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
     const bx2=next.x-cur.x, bz2=next.z-cur.z;
     const ang=angleBetween(ax,az,bx2,bz2);
     if(ang<thr) continue;
-    // Snap the corner to the grid
-    const sx=(Math.round(cur.x/20)+ox)*CS;
-    const sz=(Math.round(cur.z/20)+oz)*CS;
-    // Find the pts entry closest to this snapped position to get the right Y
-    let bestPt=pts[0], bestDist=Infinity;
-    for(const p of pts){
-      const d=Math.abs(p.bx-sx)+Math.abs(p.bz-sz);
-      if(d<bestDist){bestDist=d;bestPt=p;}
+    // Snap the corner to grid
+    let sx=(Math.round(cur.x/20)+ox)*CS;
+    let sz=(Math.round(cur.z/20)+oz)*CS;
+    // Find the pts segment that contains this snapped position
+    // and check if there are ramps in it — if so, push past the ramp zone.
+    let cpY=pts[0].by;
+    for(let j=0;j<pts.length-1;j++){
+      const pa=pts[j], pb=pts[j+1];
+      // Is sx,sz on or near this segment's span?
+      const onX=(Math.min(pa.bx,pb.bx)-CS<=sx&&sx<=Math.max(pa.bx,pb.bx)+CS);
+      const onZ=(Math.min(pa.bz,pb.bz)-CS<=sz&&sz<=Math.max(pa.bz,pb.bz)+CS);
+      if(!onX||!onZ) continue;
+      const ddxj=pb.bx-pa.bx, ddzj=pb.bz-pa.bz;
+      const hSpanJ=Math.abs(ddxj)>Math.abs(ddzj)?Math.abs(ddxj):Math.abs(ddzj);
+      const dYj=pb.by-pa.by;
+      const nRampsJ=Math.min(Math.abs(dYj)/4|0, Math.floor(hSpanJ/16));
+      if(nRampsJ>0){
+        // Push checkpoint past the ramp zone onto the flat region after it
+        const cardJ=snapCardinal(ddxj,ddzj);
+        const sxJ=cardJ===3?1:cardJ===1?-1:0;
+        const szJ=cardJ===2?1:cardJ===0?-1:0;
+        const rampEnd=nRampsJ*16+CS; // ramp horiz + one skip step
+        sx=pa.bx+sxJ*rampEnd;
+        sz=pa.bz+szJ*rampEnd;
+        cpY=pa.by+(dYj>0?nRampsJ*4:-(nRampsJ*4));
+      } else {
+        cpY=pa.by;
+      }
+      break;
     }
     const key=`${sx},${sz}`;
-    if(!cpSeen.has(key)){
-      cpSeen.add(key);
-      cps.push({bx:sx,by:bestPt.by,bz:sz});
-    }
+    if(!cpSeen.has(key)){cpSeen.add(key);cps.push({bx:sx,by:cpY,bz:sz});}
+  }
+
+  // ── Normalize elevation so minimum Y = 0 ─────────────────────────────
+  // Real terrain may dip below the KML path start. Shift everything so the
+  // lowest block is at y=0.
+  const allYs=[...flatRoad.map(b=>b.y),...rampBlocks.map(b=>b.y),...cps.map(c=>c.by)];
+  const minY=allYs.length?Math.min(...allYs):0;
+  if(minY<0){
+    const shift=-minY;
+    for(const b of flatRoad) b.y+=shift;
+    for(const b of rampBlocks) b.y+=shift;
+    for(const c of cps) c.by+=shift;
+    surface_y+=shift;
+    pts[0].by+=shift;
   }
 
   // ── Assemble output ──────────────────────────────────────────────────
@@ -1219,35 +1258,24 @@ async function generateKML(){
     let dist=0;
     for(let i=1;i<coords.length;i++)dist+=haversineM(coords[i-1].lon,coords[i-1].lat,coords[i].lon,coords[i].lat);
 
-    // Smooth first so we only fetch elevation for the reduced point set
+    // Always smooth with RDP (fixed tolerance 10m) to reduce point count
     let local=toLocal(coords);
-    if(document.getElementById('smoothPath').checked){
-      const tol=+document.getElementById('smoothTol').value||10;
+    {
+      const tol=10;
       const before=local.length;
       local=rdp(local,tol);
-      // Also trim coords to match (we need lat/lon for elevation fetch)
-      // rdp works on local but we need the original lat/lon — re-derive from indices
-      // Simpler: smooth coords directly using their spatial distance
       dbg(`RDP: ${before}→${local.length} pts (tol=${tol}m)`,'warn');
     }
 
     const useElev=document.getElementById('useElevation').checked;
 
     if(useElev){
-      // We need lat/lon to query the API. Since rdp reduced local (x,z) points,
-      // we need to find the original coords that correspond to each kept local point.
-      // Strategy: re-run smoothing on coords (using haversine distance as the geometry).
-      // Simpler: smooth the coords array itself, keeping lat/lon.
-      let smoothedCoords = coords;
-      if(document.getElementById('smoothPath').checked){
-        const tol=+document.getElementById('smoothTol').value||10;
-        // RDP on lat/lon using haversine — convert to a flat array for rdp
-        // Project to metres for rdp, then map back
-        const asLocal=toLocal(coords);
-        const kept=rdpIndices(asLocal,tol); // returns array of kept indices
-        smoothedCoords=kept.map(i=>coords[i]);
-        dbg(`Elevation fetch on ${smoothedCoords.length} smoothed points (was ${coords.length})`,'warn');
-      }
+      // Re-run RDP on lat/lon coords to get the reduced set with lat/lon for API fetch
+      const tol=10;
+      const asLocal=toLocal(coords);
+      const kept=rdpIndices(asLocal,tol);
+      const smoothedCoords=kept.map(i=>coords[i]);
+      dbg(`Elevation fetch on ${smoothedCoords.length} smoothed points (was ${coords.length})`,'warn');
 
       btn.textContent=`⏳ Fetching elevation (0/${smoothedCoords.length})…`;
       log(`Fetching elevation for ${smoothedCoords.length} pts…`,'warn');

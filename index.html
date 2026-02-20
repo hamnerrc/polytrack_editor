@@ -326,11 +326,11 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
       <label>Checkpoint turn angle (degrees)</label>
       <input type="number" id="turnAngle" value="20" min="5" max="90">
     </div>
-    <div class="tog-row greyed" title="Slope blocks not yet engineered">
-      <label>Use real elevation (Y axis)</label>
-      <input type="checkbox" disabled>
+    <div class="tog-row">
+      <label for="useElevation">Use real elevation (Y axis)</label>
+      <input type="checkbox" id="useElevation">
     </div>
-    <div class="muted-note">⚠ Elevation is disabled — PolyTrack slope blocks are not yet mapped.</div>
+    <div class="muted-note" id="elevNote" style="display:none">Uses hill blocks (ID 145/146) on slopes. Each ramp = 40 m horizontal, 10 m rise. Slopes are snapped to nearest ramp increment.</div>
   </div>
 
   <div class="step">
@@ -858,32 +858,195 @@ function angleBetween(ax,az,bx,bz){
   if(!la||!lb)return 0;
   return Math.acos(Math.max(-1,Math.min(1,dot/(la*lb))))*180/Math.PI;
 }
-function kmlPathToLines(local,ox,oy,oz,rw,thr){
-  const bp=local.map(p=>({bx:(Math.round(p.x/20)+ox)*CS,by:oy*CS,bz:(Math.round(p.z/20)+oz)*CS}));
-  const pts=[bp[0]];
-  for(let i=1;i<bp.length;i++){const pv=pts[pts.length-1];if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz)pts.push(bp[i]);}
-  const hW=Math.floor(rw/2)*CS,fW=(rw-1-Math.floor(rw/2))*CS;
-  const seen=new Set(),road=[],cps=[];
-  for(let i=0;i<pts.length-1;i++){
-    const a=pts[i],b=pts[i+1],sdx=b.bx-a.bx,sdz=b.bz-a.bz;
-    const nx=Math.abs(sdx)>=Math.abs(sdz)?0:1,nz=nx?0:1;
-    const center=line3D(a.bx,a.by,a.bz,b.bx,b.by,b.bz);
-    for(const cb of center){
-      const slab=rw<=1?[cb]:line3D(cb.x-nx*hW,cb.y,cb.z-nz*hW,cb.x+nx*fW,cb.y,cb.z+nz*fW);
-      for(const sp of slab){const k=`${sp.x},${sp.y},${sp.z}`;if(!seen.has(k)){seen.add(k);road.push({x:sp.x,y:sp.y,z:sp.z});}}
+// Ramp rotation table — same data confirmed from 4-direction decode
+// cardinal: 0=-Z  1=-X  2=+Z  3=+X
+const RAMP_ROTS=[
+  {asc145:0,asc146:2,dsc146:0,dsc145:2}, // travel -Z
+  {asc145:1,asc146:3,dsc146:1,dsc145:3}, // travel -X
+  {asc145:2,asc146:0,dsc146:2,dsc145:0}, // travel +Z
+  {asc145:3,asc146:1,dsc146:3,dsc145:1}, // travel +X
+];
+// Snap a dx,dz vector to cardinal 0=-Z 1=-X 2=+Z 3=+X
+function snapCardinal(dx,dz){
+  if(Math.abs(dz)>=Math.abs(dx)) return dz<=0?0:2;
+  return dx<=0?1:3;
+}
+
+function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
+  // 1 Y unit = 5 real metres (from decoded hill: 8 coord units horiz, 2Y = 10m rise)
+  const Y_PER_M = 1/5;
+
+  // Convert to block-space waypoints
+  const bp=local.map(p=>({
+    bx:(Math.round(p.x/20)+ox)*CS,
+    bz:(Math.round(p.z/20)+oz)*CS,
+    by:useElev ? Math.round(p.alt*Y_PER_M) : oy*CS,
+    alt:p.alt
+  }));
+
+  // Deduplicate consecutive same-XZ positions (merge Y by averaging)
+  const pts=[{...bp[0]}];
+  for(let i=1;i<bp.length;i++){
+    const pv=pts[pts.length-1];
+    if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz){
+      pts.push({...bp[i]});
+    } else {
+      pv.by=Math.round((pv.by+bp[i].by)/2);
     }
+  }
+
+  // Width helpers
+  const hW=Math.floor(rw/2)*CS, fW=(rw-1-Math.floor(rw/2))*CS;
+
+  // Collectors
+  const flatSeen=new Set(), flatRoad=[];
+  // rampBlocks: [{id,rot,x,y,z}] — individual blocks, deduplicated by key
+  const rampSeen=new Set(), rampBlocks=[];
+  const cps=[];
+
+  function addFlat(x,y,z,cardinal){
+    // Lay a road slab centred at (x,y,z), width spread perpendicular to cardinal
+    const perpZ=(cardinal===0||cardinal===2); // hill travels in Z → width spreads in X
+    const nX=perpZ?1:0, nZ=perpZ?0:1;
+    const slab=rw<=1?[{x,y,z}]:line3D(x-nX*hW,y,z-nZ*hW, x+nX*fW,y,z+nZ*fW);
+    for(const sp of slab){
+      const k=`${sp.x},${sp.y},${sp.z}`;
+      if(!flatSeen.has(k)){flatSeen.add(k);flatRoad.push({x:sp.x,y:sp.y,z:sp.z});}
+    }
+  }
+
+  function addRamp(id,rot,x,y,z,cardinal){
+    // Lay a ramp block slab centred at (x,y,z), width spread perpendicular to cardinal
+    const perpZ=(cardinal===0||cardinal===2);
+    const halfW=Math.floor(rw/2);
+    for(let w=0;w<rw;w++){
+      const off=(w-halfW)*CS;
+      const wx=x+(perpZ?off:0), wz=z+(perpZ?0:off);
+      const k=`${id},${rot},${wx},${y},${wz}`;
+      if(!rampSeen.has(k)){rampSeen.add(k);rampBlocks.push({id,rot,x:wx,y,z:wz});}
+    }
+  }
+
+  for(let i=0;i<pts.length-1;i++){
+    const a=pts[i], b=pts[i+1];
+    const ddx=b.bx-a.bx, ddz=b.bz-a.bz;
+    const cardinal=snapCardinal(ddx,ddz);
+    const rots=RAMP_ROTS[cardinal];
+
+    // Step direction unit vectors in coord space
+    const stepX= cardinal===3?CS : cardinal===1?-CS : 0;
+    const stepZ= cardinal===2?CS : cardinal===0?-CS : 0;
+
+    // Horizontal span (coord units along dominant axis)
+    const hSpan=Math.abs(cardinal<2 ? ddz : ddx);
+
+    if(!useElev){
+      // Original flat mode — walk the line with line3D
+      const nx=Math.abs(ddx)>=Math.abs(ddz)?0:1, nz=nx?0:1;
+      const center=line3D(a.bx,a.by,a.bz,b.bx,b.by,b.bz);
+      for(const cb of center){
+        const slab=rw<=1?[cb]:line3D(cb.x-nx*hW,cb.y,cb.z-nz*hW,cb.x+nx*fW,cb.y,cb.z+nz*fW);
+        for(const sp of slab){
+          const k=`${sp.x},${sp.y},${sp.z}`;
+          if(!flatSeen.has(k)){flatSeen.add(k);flatRoad.push({x:sp.x,y:sp.y,z:sp.z});}
+        }
+      }
+    } else {
+      // Elevation mode
+      // dY needed across this segment
+      const dY=b.by-a.by;  // signed, in Y units
+      const ascending=dY>0;
+      const sign=ascending?1:-1;
+
+      // Each ramp module = 16 coord units horiz, ±2 Y
+      // Fit as many ramp modules as needed and as available space allows
+      const rampsNeeded=Math.abs(Math.round(dY/2));
+      const maxRamps=Math.floor(hSpan/16);
+      const nRamps=Math.min(rampsNeeded,maxRamps);
+      // Remaining horizontal units filled with flat road
+      const rampHoriz=nRamps*16;
+      const flatHoriz=hSpan-rampHoriz;
+
+      // Strategy: cluster ramps together at the start of the climb/descent
+      // (for ascent: ramp early, flat after; for descent: flat first, ramp late)
+      // Walk from a toward b in CS-unit steps
+
+      let cx=a.bx, cz=a.bz, cy=a.by;
+      let pos=0; // how many coord units we've walked
+      let rampsLeft=nRamps;
+
+      // Helper: advance pos and cursor by `units` coord units
+      const advance=(units)=>{ cx+=stepX*(units/CS); cz+=stepZ*(units/CS); pos+=units; };
+
+      if(ascending){
+        // Place ramps first, then flat
+        while(rampsLeft>0 && pos+16<=hSpan+0.5){
+          // ID145 entry: positioned at cx + half a CS step so it sits in the middle of its 8-unit zone
+          addRamp(145, rots.asc145, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
+          advance(8);
+          // ID146 ramp: Y rises by 2
+          cy+=2;
+          addRamp(146, rots.asc146, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
+          advance(8);
+          rampsLeft--;
+        }
+        // Fill remaining with flat
+        while(pos+CS<=hSpan+0.5){
+          addFlat(cx, cy, cz, cardinal);
+          advance(CS);
+        }
+      } else {
+        // Descend: flat first, then ramps
+        const flatFirst=hSpan-nRamps*16;
+        let flatDone=0;
+        while(flatDone<flatFirst-0.5 && pos+CS<=hSpan+0.5){
+          addFlat(cx, cy, cz, cardinal);
+          advance(CS);
+          flatDone+=CS;
+        }
+        while(rampsLeft>0 && pos+16<=hSpan+0.5){
+          // For descent: ID146 first (drops Y by 2), then ID145 exit
+          cy-=2;
+          addRamp(146, rots.dsc146, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
+          advance(8);
+          addRamp(145, rots.dsc145, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
+          advance(8);
+          rampsLeft--;
+        }
+        // Any remaining flat (e.g. rounding residual)
+        while(pos+CS<=hSpan+0.5){
+          addFlat(cx, cy, cz, cardinal);
+          advance(CS);
+        }
+      }
+
+      // Always stamp the endpoint as flat road (anchors the destination height)
+      addFlat(b.bx, b.by, b.bz, cardinal);
+    }
+
+    // Checkpoint detection (turn angle)
     if(i<pts.length-2){
-      const c=pts[i+2],ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c.bx-b.bx,c.bz-b.bz);
+      const c2=pts[i+2];
+      const ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c2.bx-b.bx,c2.bz-b.bz);
       if(ang>=thr)cps.push({bx:b.bx,by:b.by,bz:b.bz});
     }
   }
+
+  // Build output line list
   const out=[];
-  out.push({id:25,points:road,rot:0});
-  cps.forEach((cp,i)=>out.push({id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:i}],rot:0,cpIndex:i}));
+  if(flatRoad.length) out.push({id:25,points:flatRoad,rot:0});
+  // Each ramp block is its own entry so its id/rot are respected by the encoder
+  for(const rb of rampBlocks){
+    out.push({id:rb.id,rot:rb.rot,points:[{x:rb.x,y:rb.y,z:rb.z}]});
+  }
+  cps.forEach((cp,i)=>out.push({
+    id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:i}],rot:0,cpIndex:i
+  }));
   out.push({id:92,points:[{x:pts[0].bx,y:pts[0].by,z:pts[0].bz}],rot:0});
   const last=pts[pts.length-1];
   out.push({id:76,points:[{x:last.bx,y:last.by,z:last.bz}],rot:0});
-  return{lines:out,blockPts:pts,cps,roadBlocks:road.length};
+
+  return{lines:out,blockPts:pts,cps,roadBlocks:flatRoad.length+rampBlocks.length};
 }
 
 function redrawKML(){
@@ -905,13 +1068,35 @@ function drawKMLCanvas(blockPts,cps){
   ctx.fillStyle=dark?'rgba(255,255,255,.025)':'rgba(0,0,0,.05)';
   const gs=Math.max(1,Math.round(38/sc));
   for(let gx=0;gx<=rX;gx+=gs)for(let gz=0;gz<=rZ;gz+=gs){const{cx,cy}=toC(mnX+gx,mnZ+gz);ctx.fillRect(cx,cy,1,1);}
-  // Track line
-  const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#f5a623';
-  ctx.shadowColor=acc;ctx.shadowBlur=5;ctx.strokeStyle=acc;
-  ctx.lineWidth=Math.max(1.5,sc*.65);ctx.lineJoin='round';ctx.beginPath();
-  const{cx:sx0,cy:sz0}=toC(blockPts[0].bx,blockPts[0].bz);ctx.moveTo(sx0,sz0);
-  for(let i=1;i<blockPts.length;i++){const{cx,cy}=toC(blockPts[i].bx,blockPts[i].bz);ctx.lineTo(cx,cy);}
-  ctx.stroke();ctx.shadowBlur=0;
+
+  const useElev=document.getElementById('useElevation').checked;
+  const ys=blockPts.map(p=>p.by);
+  const mnY=Math.min(...ys),mxY=Math.max(...ys),rY=mxY-mnY||1;
+
+  // Draw track — colour by elevation if active, else plain amber
+  ctx.lineWidth=Math.max(1.5,sc*.65);ctx.lineJoin='round';ctx.lineCap='round';
+  if(useElev && rY>0){
+    // Draw segment by segment with elevation colour (blue=low → red=high)
+    for(let i=0;i<blockPts.length-1;i++){
+      const t=(blockPts[i].by-mnY)/rY;
+      // Blue → cyan → green → yellow → red
+      const h=(1-t)*240; // hue 240=blue → 0=red
+      ctx.strokeStyle=`hsl(${h},90%,55%)`;
+      ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=4;
+      const{cx:x1,cy:y1}=toC(blockPts[i].bx,blockPts[i].bz);
+      const{cx:x2,cy:y2}=toC(blockPts[i+1].bx,blockPts[i+1].bz);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }
+    ctx.shadowBlur=0;
+  } else {
+    const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#f5a623';
+    ctx.shadowColor=acc;ctx.shadowBlur=5;ctx.strokeStyle=acc;
+    ctx.beginPath();
+    const{cx:sx0,cy:sz0}=toC(blockPts[0].bx,blockPts[0].bz);ctx.moveTo(sx0,sz0);
+    for(let i=1;i<blockPts.length;i++){const{cx,cy}=toC(blockPts[i].bx,blockPts[i].bz);ctx.lineTo(cx,cy);}
+    ctx.stroke();ctx.shadowBlur=0;
+  }
+
   // Checkpoints
   ctx.fillStyle='rgba(57,200,224,.85)';
   for(const cp of cps){const{cx,cy}=toC(cp.bx,cp.bz);ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();}
@@ -928,10 +1113,25 @@ function drawKMLCanvas(blockPts,cps){
   ctx.font='10px "JetBrains Mono",monospace';
   ctx.fillStyle='#3dd68c';ctx.fillText('START',sc2+8,sy+3);
   ctx.fillStyle='#e04040';ctx.fillText('FINISH',fc+8,fy+3);
-  // Legend
-  ctx.fillStyle='rgba(57,200,224,.8)';ctx.beginPath();ctx.arc(pad+4,canvas.height-17,3,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=dark?'rgba(255,255,255,.22)':'rgba(0,0,0,.28)';
-  ctx.fillText('CHECKPOINT',pad+11,canvas.height-13);
+
+  // Elevation colour legend
+  if(useElev && rY>0){
+    const lx=pad+4, ly=canvas.height-18, lw=80;
+    for(let px=0;px<lw;px++){
+      const h=(1-px/lw)*240;
+      ctx.fillStyle=`hsl(${h},90%,55%)`;
+      ctx.fillRect(lx+px,ly,1,8);
+    }
+    ctx.font='8px "JetBrains Mono",monospace';
+    ctx.fillStyle=dark?'rgba(255,255,255,.5)':'rgba(0,0,0,.4)';
+    ctx.fillText(`${Math.round(mnY*5)}m`,lx,ly-2);
+    ctx.fillText(`${Math.round(mxY*5)}m`,lx+lw-20,ly-2);
+  } else {
+    ctx.fillStyle='rgba(57,200,224,.8)';ctx.beginPath();ctx.arc(pad+4,canvas.height-17,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=dark?'rgba(255,255,255,.22)':'rgba(0,0,0,.28)';
+    ctx.font='10px "JetBrains Mono",monospace';
+    ctx.fillText('CHECKPOINT',pad+11,canvas.height-13);
+  }
   document.getElementById('cvInfo').textContent=
     `${Math.round(rX/CS)}×${Math.round(rZ/CS)} blocks · ${(Math.round(rX/CS)*20/1000).toFixed(1)}×${(Math.round(rZ/CS)*20/1000).toFixed(1)} km`;
 }
@@ -957,12 +1157,19 @@ async function generateKML(){
     const oz=+document.getElementById('originZ').value||500;
     const rw=+document.getElementById('roadWidth').value||1;
     const thr=+document.getElementById('turnAngle').value||20;
-    const result=kmlPathToLines(local,ox,oy,oz,rw,thr);
+    const useElev=document.getElementById('useElevation').checked;
+    const result=kmlPathToLines(local,ox,oy,oz,rw,thr,useElev);
     _lastKMLResult=result;
     setStat('A',coords.length);document.getElementById('slA').textContent='KML Points';
     setStat('B',result.roadBlocks.toLocaleString());document.getElementById('slB').textContent='Road Blocks';
     setStat('C',result.cps.length);document.getElementById('slC').textContent='Checkpoints';
-    setStat('D',(dist/1000).toFixed(2)+' km');document.getElementById('slD').textContent='Circuit Length';
+    if(useElev){
+      const alts=local.map(p=>p.alt);
+      const elevRange=Math.round(Math.max(...alts)-Math.min(...alts));
+      setStat('D',elevRange+'m');document.getElementById('slD').textContent='Elev Range';
+    } else {
+      setStat('D',(dist/1000).toFixed(2)+' km');document.getElementById('slD').textContent='Circuit Length';
+    }
     drawKMLCanvas(result.blockPts,result.cps);
     log('Compressing…','warn');
     const code=await encodeTrack(result.lines,
@@ -972,6 +1179,11 @@ async function generateKML(){
   }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');}
   finally{btn.disabled=false;btn.textContent='⚡ Generate Circuit Code';}
 }
+
+// Elevation checkbox hint
+document.getElementById('useElevation').addEventListener('change',function(){
+  document.getElementById('elevNote').style.display=this.checked?'':'none';
+});
 
 // KML file drag/drop
 const dz=document.getElementById('dropZone'),fi=document.getElementById('fileInput');

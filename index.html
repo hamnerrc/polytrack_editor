@@ -858,65 +858,66 @@ function angleBetween(ax,az,bx,bz){
   if(!la||!lb)return 0;
   return Math.acos(Math.max(-1,Math.min(1,dot/(la*lb))))*180/Math.PI;
 }
-// Ramp rotation table — same data confirmed from 4-direction decode
+// Ramp rotation table — confirmed from 4-direction decode
 // cardinal: 0=-Z  1=-X  2=+Z  3=+X
 const RAMP_ROTS=[
-  {asc145:0,asc146:2,dsc146:0,dsc145:2}, // travel -Z
-  {asc145:1,asc146:3,dsc146:1,dsc145:3}, // travel -X
-  {asc145:2,asc146:0,dsc146:2,dsc145:0}, // travel +Z
-  {asc145:3,asc146:1,dsc146:3,dsc145:1}, // travel +X
+  {asc145:0,asc146:2,dsc146:0,dsc145:2}, // -Z
+  {asc145:1,asc146:3,dsc146:1,dsc145:3}, // -X
+  {asc145:2,asc146:0,dsc146:2,dsc145:0}, // +Z
+  {asc145:3,asc146:1,dsc146:3,dsc145:1}, // +X
 ];
-// Snap a dx,dz vector to cardinal 0=-Z 1=-X 2=+Z 3=+X
 function snapCardinal(dx,dz){
   if(Math.abs(dz)>=Math.abs(dx)) return dz<=0?0:2;
   return dx<=0?1:3;
 }
 
 function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
-  // 1 Y unit = 5 real metres (from decoded hill: 8 coord units horiz, 2Y = 10m rise)
-  const Y_PER_M = 1/5;
+  // ── Geometry constants (from decoded hill track) ──────────────────────
+  // 1 Y unit = 5 real metres
+  // ID145 = transition ramp: 8 coord units wide, 0 surface Y change
+  //         stored y = surface_y (block centre = surface level)
+  // ID146 = slope ramp:      8 coord units wide, ±4 surface Y change
+  //         stored y = surface_y + 2 (asc) or surface_y - 2 (dsc)
+  //         (block centre = midpoint of slope)
+  // One ramp MODULE = ID145 (8u) + ID146 (8u) = 16 coord units, ±4 surface Y
+  // 20 real metres rise = 4 Y units = 1 ramp module ✓
 
-  // Convert to block-space waypoints
-  const bp=local.map(p=>({
-    bx:(Math.round(p.x/20)+ox)*CS,
-    bz:(Math.round(p.z/20)+oz)*CS,
-    by:useElev ? Math.round(p.alt*Y_PER_M) : oy*CS,
-    alt:p.alt
+  // Quantize altitude to multiples of 4 Y (= 20m real) so ramps fit exactly
+  const altToY = (alt) => Math.round(alt / 20) * 4;
+
+  const bp = local.map(p=>({
+    bx: (Math.round(p.x/20)+ox)*CS,
+    bz: (Math.round(p.z/20)+oz)*CS,
+    by: useElev ? altToY(p.alt) : oy*CS,
   }));
 
-  // Deduplicate consecutive same-XZ positions (merge Y by averaging)
+  // Deduplicate consecutive same-XZ (keep latest Y)
   const pts=[{...bp[0]}];
   for(let i=1;i<bp.length;i++){
     const pv=pts[pts.length-1];
-    if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz){
-      pts.push({...bp[i]});
-    } else {
-      pv.by=Math.round((pv.by+bp[i].by)/2);
-    }
+    if(bp[i].bx!==pv.bx||bp[i].bz!==pv.bz) pts.push({...bp[i]});
+    else pv.by=bp[i].by;
   }
 
-  // Width helpers
-  const hW=Math.floor(rw/2)*CS, fW=(rw-1-Math.floor(rw/2))*CS;
-
-  // Collectors
+  // ── Collectors ───────────────────────────────────────────────────────
   const flatSeen=new Set(), flatRoad=[];
-  // rampBlocks: [{id,rot,x,y,z}] — individual blocks, deduplicated by key
   const rampSeen=new Set(), rampBlocks=[];
   const cps=[];
+  const hW=Math.floor(rw/2)*CS, fW=(rw-1-Math.floor(rw/2))*CS;
 
+  // Add a flat road slab centred at (x,y,z), width perpendicular to cardinal
   function addFlat(x,y,z,cardinal){
-    // Lay a road slab centred at (x,y,z), width spread perpendicular to cardinal
-    const perpZ=(cardinal===0||cardinal===2); // hill travels in Z → width spreads in X
-    const nX=perpZ?1:0, nZ=perpZ?0:1;
-    const slab=rw<=1?[{x,y,z}]:line3D(x-nX*hW,y,z-nZ*hW, x+nX*fW,y,z+nZ*fW);
+    const perpZ=(cardinal===0||cardinal===2);
+    const nx=perpZ?1:0, nz=perpZ?0:1;
+    const slab=rw<=1?[{x,y,z}]:line3D(x-nx*hW,y,z-nz*hW,x+nx*fW,y,z+nz*fW);
     for(const sp of slab){
       const k=`${sp.x},${sp.y},${sp.z}`;
       if(!flatSeen.has(k)){flatSeen.add(k);flatRoad.push({x:sp.x,y:sp.y,z:sp.z});}
     }
   }
 
+  // Add a ramp block slab centred at (x,y,z), width perpendicular to cardinal
   function addRamp(id,rot,x,y,z,cardinal){
-    // Lay a ramp block slab centred at (x,y,z), width spread perpendicular to cardinal
     const perpZ=(cardinal===0||cardinal===2);
     const halfW=Math.floor(rw/2);
     for(let w=0;w<rw;w++){
@@ -927,23 +928,29 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
     }
   }
 
+  // ── Surface Y tracking ───────────────────────────────────────────────
+  // surface_y is the height the car drives on; carried between segments
+  let surface_y = pts[0].by;
+
+  // ── Segment walker ───────────────────────────────────────────────────
   for(let i=0;i<pts.length-1;i++){
     const a=pts[i], b=pts[i+1];
     const ddx=b.bx-a.bx, ddz=b.bz-a.bz;
     const cardinal=snapCardinal(ddx,ddz);
     const rots=RAMP_ROTS[cardinal];
 
-    // Step direction unit vectors in coord space
-    const stepX= cardinal===3?CS : cardinal===1?-CS : 0;
-    const stepZ= cardinal===2?CS : cardinal===0?-CS : 0;
+    // Step direction: 1 coord unit at a time along dominant axis
+    const stepX= cardinal===3?1 : cardinal===1?-1 : 0;
+    const stepZ= cardinal===2?1 : cardinal===0?-1 : 0;
 
-    // Horizontal span (coord units along dominant axis)
-    const hSpan=Math.abs(cardinal<2 ? ddz : ddx);
+    // Horizontal span in coord units along dominant axis
+    // cardinal 0(-Z),2(+Z) travel in Z; cardinal 1(-X),3(+X) travel in X
+    const hSpan=Math.abs(cardinal===0||cardinal===2 ? ddz : ddx);
 
     if(!useElev){
-      // Original flat mode — walk the line with line3D
+      // ── FLAT MODE: exact replica of original behaviour ──────────────
       const nx=Math.abs(ddx)>=Math.abs(ddz)?0:1, nz=nx?0:1;
-      const center=line3D(a.bx,a.by,a.bz,b.bx,b.by,b.bz);
+      const center=line3D(a.bx,surface_y,a.bz,b.bx,surface_y,b.bz);
       for(const cb of center){
         const slab=rw<=1?[cb]:line3D(cb.x-nx*hW,cb.y,cb.z-nz*hW,cb.x+nx*fW,cb.y,cb.z+nz*fW);
         for(const sp of slab){
@@ -952,99 +959,88 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
         }
       }
     } else {
-      // Elevation mode
-      // dY needed across this segment
-      const dY=b.by-a.by;  // signed, in Y units
-      const ascending=dY>0;
-      const sign=ascending?1:-1;
+      // ── ELEVATION MODE ──────────────────────────────────────────────
+      // How many ramp modules can we fit, and how many do we need?
+      const targetY = b.by;                         // quantized target (multiple of 4)
+      const dY = targetY - surface_y;               // signed, multiple of 4
+      const ascending = dY > 0;
+      const rampsNeeded = Math.abs(dY) / 4;         // exact integer
+      const rampsAvail  = Math.floor(hSpan / 16);   // how many fit horizontally
+      const nRamps = Math.min(rampsNeeded, rampsAvail);
+      const rampHoriz = nRamps * 16;                // coord units consumed by ramps
+      const flatHoriz = hSpan - rampHoriz;          // remaining flat units
 
-      // Each ramp module = 16 coord units horiz, ±2 Y
-      // Fit as many ramp modules as needed and as available space allows
-      const rampsNeeded=Math.abs(Math.round(dY/2));
-      const maxRamps=Math.floor(hSpan/16);
-      const nRamps=Math.min(rampsNeeded,maxRamps);
-      // Remaining horizontal units filled with flat road
-      const rampHoriz=nRamps*16;
-      const flatHoriz=hSpan-rampHoriz;
+      // Position cursor starts at A
+      let cx=a.bx, cz=a.bz;
 
-      // Strategy: cluster ramps together at the start of the climb/descent
-      // (for ascent: ramp early, flat after; for descent: flat first, ramp late)
-      // Walk from a toward b in CS-unit steps
-
-      let cx=a.bx, cz=a.bz, cy=a.by;
-      let pos=0; // how many coord units we've walked
-      let rampsLeft=nRamps;
-
-      // Helper: advance pos and cursor by `units` coord units
-      const advance=(units)=>{ cx+=stepX*(units/CS); cz+=stepZ*(units/CS); pos+=units; };
+      // Helper: step cursor n coord units along cardinal
+      const step=(n)=>{ cx+=stepX*n; cz+=stepZ*n; };
 
       if(ascending){
-        // Place ramps first, then flat
-        while(rampsLeft>0 && pos+16<=hSpan+0.5){
-          // ID145 entry: positioned at cx + half a CS step so it sits in the middle of its 8-unit zone
-          addRamp(145, rots.asc145, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
-          advance(8);
-          // ID146 ramp: Y rises by 2
-          cy+=2;
-          addRamp(146, rots.asc146, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
-          advance(8);
-          rampsLeft--;
+        // Ramps first, then flat
+        for(let r=0;r<nRamps;r++){
+          // ID145: centre at +4 units from current position (middle of 8-unit zone)
+          addRamp(145, rots.asc145, cx+stepX*4, surface_y,   cz+stepZ*4, cardinal);
+          step(8);
+          // ID146: centre at +4 units from here (middle of next 8-unit zone)
+          //        stored y = surface_y+2 (midpoint of slope from surface_y to surface_y+4)
+          addRamp(146, rots.asc146, cx+stepX*4, surface_y+2, cz+stepZ*4, cardinal);
+          step(8);
+          surface_y += 4;
         }
-        // Fill remaining with flat
-        while(pos+CS<=hSpan+0.5){
-          addFlat(cx, cy, cz, cardinal);
-          advance(CS);
+        // Fill remaining with flat road (1 block per CS units)
+        let flatDone=0;
+        while(flatDone+CS<=flatHoriz+0.5){
+          addFlat(cx, surface_y, cz, cardinal);
+          step(CS); flatDone+=CS;
         }
       } else {
-        // Descend: flat first, then ramps
-        const flatFirst=hSpan-nRamps*16;
+        // Flat first, then ramps descend
         let flatDone=0;
-        while(flatDone<flatFirst-0.5 && pos+CS<=hSpan+0.5){
-          addFlat(cx, cy, cz, cardinal);
-          advance(CS);
-          flatDone+=CS;
+        while(flatDone+CS<=flatHoriz+0.5){
+          addFlat(cx, surface_y, cz, cardinal);
+          step(CS); flatDone+=CS;
         }
-        while(rampsLeft>0 && pos+16<=hSpan+0.5){
-          // For descent: ID146 first (drops Y by 2), then ID145 exit
-          cy-=2;
-          addRamp(146, rots.dsc146, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
-          advance(8);
-          addRamp(145, rots.dsc145, cx+stepX*1, cy,    cz+stepZ*1, cardinal);
-          advance(8);
-          rampsLeft--;
-        }
-        // Any remaining flat (e.g. rounding residual)
-        while(pos+CS<=hSpan+0.5){
-          addFlat(cx, cy, cz, cardinal);
-          advance(CS);
+        for(let r=0;r<nRamps;r++){
+          // Descending: surface goes from surface_y DOWN to surface_y-4
+          // ID145 stored y = surface_y (exit transition, same level as flat before it)
+          addRamp(145, rots.dsc145, cx+stepX*4, surface_y,   cz+stepZ*4, cardinal);
+          step(8);
+          // ID146 stored y = surface_y-2 (midpoint of slope from surface_y to surface_y-4)
+          addRamp(146, rots.dsc146, cx+stepX*4, surface_y-2, cz+stepZ*4, cardinal);
+          step(8);
+          surface_y -= 4;
         }
       }
 
-      // Always stamp the endpoint as flat road (anchors the destination height)
-      addFlat(b.bx, b.by, b.bz, cardinal);
+      // Stitch any perpendicular gap: if the segment was diagonal, the cardinal
+      // walk ends at the right position on the dominant axis but the wrong position
+      // on the perpendicular axis. Fill the gap with flat road at surface_y.
+      if(cx!==b.bx||cz!==b.bz){
+        const stitchLine=line3D(cx,surface_y,cz,b.bx,surface_y,b.bz);
+        for(const sp of stitchLine) addFlat(sp.x,sp.y,sp.z,cardinal);
+      }
     }
 
-    // Checkpoint detection (turn angle)
+    // Checkpoint detection
     if(i<pts.length-2){
       const c2=pts[i+2];
       const ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c2.bx-b.bx,c2.bz-b.bz);
-      if(ang>=thr)cps.push({bx:b.bx,by:b.by,bz:b.bz});
+      if(ang>=thr)cps.push({bx:b.bx,by:surface_y,bz:b.bz});
     }
   }
 
-  // Build output line list
+  // ── Assemble output ──────────────────────────────────────────────────
   const out=[];
   if(flatRoad.length) out.push({id:25,points:flatRoad,rot:0});
-  // Each ramp block is its own entry so its id/rot are respected by the encoder
-  for(const rb of rampBlocks){
+  for(const rb of rampBlocks)
     out.push({id:rb.id,rot:rb.rot,points:[{x:rb.x,y:rb.y,z:rb.z}]});
-  }
-  cps.forEach((cp,i)=>out.push({
-    id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:i}],rot:0,cpIndex:i
+  cps.forEach((cp,idx)=>out.push({
+    id:75,points:[{x:cp.bx,y:cp.by,z:cp.bz,cpIndex:idx}],rot:0,cpIndex:idx
   }));
   out.push({id:92,points:[{x:pts[0].bx,y:pts[0].by,z:pts[0].bz}],rot:0});
   const last=pts[pts.length-1];
-  out.push({id:76,points:[{x:last.bx,y:last.by,z:last.bz}],rot:0});
+  out.push({id:76,points:[{x:last.bx,y:surface_y,z:last.bz}],rot:0});
 
   return{lines:out,blockPts:pts,cps,roadBlocks:flatRoad.length+rampBlocks.length};
 }

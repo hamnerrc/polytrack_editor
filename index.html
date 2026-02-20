@@ -976,20 +976,34 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
       // Helper: step cursor n coord units along cardinal
       const step=(n)=>{ cx+=stepX*n; cz+=stepZ*n; };
 
-      if(ascending){
+      if(nRamps===0){
+        // No elevation change in this segment — use line3D for correct diagonal staircasing
+        const nx2=Math.abs(ddx)>=Math.abs(ddz)?0:1, nz2=nx2?0:1;
+        const center=line3D(a.bx,surface_y,a.bz,b.bx,surface_y,b.bz);
+        for(const cb of center){
+          const slab=rw<=1?[cb]:line3D(cb.x-nx2*hW,cb.y,cb.z-nz2*hW,cb.x+nx2*fW,cb.y,cb.z+nz2*fW);
+          for(const sp of slab){
+            const k=`${sp.x},${sp.y},${sp.z}`;
+            if(!flatSeen.has(k)){flatSeen.add(k);flatRoad.push({x:sp.x,y:sp.y,z:sp.z});}
+          }
+        }
+      } else if(ascending){
         // Ramps first, then flat
         for(let r=0;r<nRamps;r++){
           // ID145: centre at +4 units from current position (middle of 8-unit zone)
           addRamp(145, rots.asc145, cx+stepX*4, surface_y,   cz+stepZ*4, cardinal);
           step(8);
-          // ID146: centre at +4 units from here (middle of next 8-unit zone)
-          //        stored y = surface_y+2 (midpoint of slope from surface_y to surface_y+4)
+          // ID146: centre at next +4 units (middle of next 8-unit zone)
+          //        stored y = surface_y+2 (midpoint of slope: surface_y → surface_y+4)
           addRamp(146, rots.asc146, cx+stepX*4, surface_y+2, cz+stepZ*4, cardinal);
           step(8);
           surface_y += 4;
         }
-        // Fill remaining with flat road (1 block per CS units)
-        let flatDone=0;
+        // FIX: cursor is now at ID146's exit edge. Skip past it before placing flat.
+        // (The ramp block's footprint covers its own exit edge — no flat block there.)
+        step(CS);
+        // Fill remaining flat road. flatDone starts at CS to account for the skip above.
+        let flatDone=CS;
         while(flatDone+CS<=flatHoriz+0.5){
           addFlat(cx, surface_y, cz, cardinal);
           step(CS); flatDone+=CS;
@@ -1002,31 +1016,50 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
           step(CS); flatDone+=CS;
         }
         for(let r=0;r<nRamps;r++){
-          // Descending: surface goes from surface_y DOWN to surface_y-4
-          // ID145 stored y = surface_y (exit transition, same level as flat before it)
+          // Descending: surface drops from surface_y to surface_y-4
+          // ID145 stored y = surface_y (entry transition, flush with the flat before it)
           addRamp(145, rots.dsc145, cx+stepX*4, surface_y,   cz+stepZ*4, cardinal);
           step(8);
-          // ID146 stored y = surface_y-2 (midpoint of slope from surface_y to surface_y-4)
+          // ID146 stored y = surface_y-2 (midpoint of slope: surface_y → surface_y-4)
           addRamp(146, rots.dsc146, cx+stepX*4, surface_y-2, cz+stepZ*4, cardinal);
           step(8);
           surface_y -= 4;
         }
       }
 
-      // Stitch any perpendicular gap: if the segment was diagonal, the cardinal
-      // walk ends at the right position on the dominant axis but the wrong position
-      // on the perpendicular axis. Fill the gap with flat road at surface_y.
-      if(cx!==b.bx||cz!==b.bz){
+      // Stitch any perpendicular gap (diagonal segments): fill from walk endpoint to b
+      if(nRamps>0 && (cx!==b.bx||cz!==b.bz)){
         const stitchLine=line3D(cx,surface_y,cz,b.bx,surface_y,b.bz);
         for(const sp of stitchLine) addFlat(sp.x,sp.y,sp.z,cardinal);
       }
     }
+  }
 
-    // Checkpoint detection
-    if(i<pts.length-2){
-      const c2=pts[i+2];
-      const ang=angleBetween(b.bx-a.bx,b.bz-a.bz,c2.bx-b.bx,c2.bz-b.bz);
-      if(ang>=thr)cps.push({bx:b.bx,by:surface_y,bz:b.bz});
+  // ── Checkpoint detection from pre-snap local coords ──────────────────
+  // Using `local` (before grid snap) preserves tight corners that collapse
+  // to the same grid cell after snapping and would be missed in `pts`.
+  // For each turn in local with angle >= thr, find the nearest snapped pts
+  // entry and mark it as a checkpoint (dedup by position).
+  const cpSeen=new Set();
+  for(let i=1;i<local.length-1;i++){
+    const prev=local[i-1], cur=local[i], next=local[i+1];
+    const ax=cur.x-prev.x, az=cur.z-prev.z;
+    const bx2=next.x-cur.x, bz2=next.z-cur.z;
+    const ang=angleBetween(ax,az,bx2,bz2);
+    if(ang<thr) continue;
+    // Snap the corner to the grid
+    const sx=(Math.round(cur.x/20)+ox)*CS;
+    const sz=(Math.round(cur.z/20)+oz)*CS;
+    // Find the pts entry closest to this snapped position to get the right Y
+    let bestPt=pts[0], bestDist=Infinity;
+    for(const p of pts){
+      const d=Math.abs(p.bx-sx)+Math.abs(p.bz-sz);
+      if(d<bestDist){bestDist=d;bestPt=p;}
+    }
+    const key=`${sx},${sz}`;
+    if(!cpSeen.has(key)){
+      cpSeen.add(key);
+      cps.push({bx:sx,by:bestPt.by,bz:sz});
     }
   }
 

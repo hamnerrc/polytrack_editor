@@ -1,252 +1,533 @@
 <!DOCTYPE html>
-
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
 <title>PolyTrack Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
-/* ── THEMES ─────────────────────────────────────── */
-[data-theme="dark"]{
-  --bg:#08090f; --surf:#0d1019; --panel:#121622; --card:#161c2d;
-  --b1:#1e2840; --b2:#2a3a58;
-  --txt:#c4d0ee; --bright:#eef2ff; --dim:#4e6080; --faint:#1a2236;
-  --acc:#f5a623; --alo:rgba(245,166,35,.1); --abd:rgba(245,166,35,.25);
-  --cyan:#39c8e0; --grn:#3dd68c; --red:#e04040;
-  --cbg:#000; --cclr:#39c8e0;
-  --glow:rgba(245,166,35,.18); --shad:rgba(0,0,0,.6);
-  --scan:rgba(0,0,0,.045);
-}
-[data-theme="light"]{
-  --bg:#f0f2f8; --surf:#ffffff; --panel:#f7f8fc; --card:#ffffff;
-  --b1:#dde2ef; --b2:#c4cce0;
-  --txt:#2a3350; --bright:#111830; --dim:#7080a0; --faint:#e8ebf5;
-  --acc:#c87c08; --alo:rgba(200,124,8,.09); --abd:rgba(200,124,8,.22);
-  --cyan:#1899b8; --grn:#1d9e5e; --red:#c03030;
-  --cbg:#1a1e2e; --cclr:#5dcfe8;
-  --glow:rgba(200,124,8,.12); --shad:rgba(0,0,0,.15);
-  --scan:rgba(0,0,0,0);
-}
-
-/* ── RESET ───────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-font-family:‘Rajdhani’,sans-serif;
-background:var(–bg);color:var(–txt);
-min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s;
-}
-[data-theme=“dark”] body::before{
-content:’’;position:fixed;inset:0;pointer-events:none;z-index:9999;
-background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(–scan) 2px,var(–scan) 4px);
+:root {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --panel: #ffffff;
+  --card: #f8fafc;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #334155;
+  --heading: #0f172a;
+  --muted: #64748b;
+  --faint: #f1f5f9;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, .09);
+  --accent-border: rgba(37, 99, 235, .22);
+  --cyan: #0e7490;
+  --success: #15803d;
+  --danger: #dc2626;
+  --code-bg: #0f172a;
+  --code-text: #dbeafe;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 30px rgba(15, 23, 42, .05);
 }
 
-/* ── TOPBAR ──────────────────────────────────────── */
-.topbar{
-display:flex;align-items:center;justify-content:space-between;
-height:50px;padding:0 1.4rem;
-background:var(–surf);border-bottom:1px solid var(–b1);
-position:sticky;top:0;z-index:300;
-}
-.logo{display:flex;align-items:center;gap:.6rem}
-.logo-gem{
-width:24px;height:24px;background:var(–acc);flex-shrink:0;
-clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);
-box-shadow:0 0 12px var(–glow);
-}
-.logo-txt{font-size:1rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–bright)}
-.logo-txt span{color:var(–acc)}
-.topbar-r{display:flex;align-items:center;gap:.75rem}
-#topInfo{font-family:‘JetBrains Mono’,monospace;font-size:.55rem;color:var(–dim);letter-spacing:1px}
-.theme-toggle{
-width:30px;height:30px;border-radius:50%;
-border:1px solid var(–b1);background:var(–panel);
-cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;
-transition:all .15s;color:var(–txt);
-}
-.theme-toggle:hover{border-color:var(–acc);color:var(–acc)}
-
-/* ── MODE TABS ───────────────────────────────────── */
-.tabs{
-display:flex;background:var(–surf);
-border-bottom:2px solid var(–b1);padding:0 1.4rem;
-}
-.tab{
-padding:.65rem 1.2rem;font-weight:700;font-size:.68rem;
-letter-spacing:2px;text-transform:uppercase;color:var(–dim);
-cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;
-transition:color .15s;display:flex;align-items:center;gap:.4rem;white-space:nowrap;
-}
-.tab:hover{color:var(–txt)}
-.tab.on{color:var(–acc);border-bottom-color:var(–acc)}
-.pill{
-font-size:.5rem;padding:.1rem .3rem;border-radius:2px;
-background:var(–alo);border:1px solid var(–abd);color:var(–acc);
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --surface: #111827;
+  --panel: #111827;
+  --card: #1e293b;
+  --border: #293548;
+  --border-strong: #3b4a61;
+  --text: #cbd5e1;
+  --heading: #f8fafc;
+  --muted: #94a3b8;
+  --faint: #172033;
+  --accent: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, .11);
+  --accent-border: rgba(96, 165, 250, .27);
+  --cyan: #22d3ee;
+  --success: #4ade80;
+  --danger: #f87171;
+  --code-bg: #020617;
+  --code-text: #dbeafe;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .28), 0 12px 30px rgba(0, 0, 0, .18);
 }
 
-/* ── WORKSPACE ───────────────────────────────────── */
-.workspace{display:grid;grid-template-columns:296px 1fr;min-height:calc(100vh - 98px)}
-.sidebar{background:var(–surf);border-right:1px solid var(–b1);overflow-y:auto;display:flex;flex-direction:column}
-.main{display:flex;flex-direction:column;min-height:0}
-
-/* ── SIDEBAR STEP SECTIONS ───────────────────────── */
-.step{padding:.9rem 1.1rem;border-bottom:1px solid var(–b1)}
-.step:last-child{border-bottom:none;flex:1}
-.step-hd{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
-.step-num{
-width:19px;height:19px;border-radius:50%;flex-shrink:0;
-background:var(–alo);border:1px solid var(–abd);
-font-family:‘JetBrains Mono’,monospace;font-size:.58rem;font-weight:700;
-color:var(–acc);display:flex;align-items:center;justify-content:center;
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; min-height: 100%; }
+body {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background .2s ease, color .2s ease;
 }
-.step-lbl{font-size:.6rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(–dim)}
+button, input, select, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
 
-/* ── FORM ────────────────────────────────────────── */
-.field{margin-bottom:.6rem}.field:last-child{margin-bottom:0}
-.field>label{
-display:block;font-size:.58rem;font-weight:600;letter-spacing:1.8px;
-text-transform:uppercase;color:var(–dim);margin-bottom:.25rem;
+/* Header */
+.topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 300;
 }
-input[type=text],input[type=number],select,textarea{
-width:100%;padding:.42rem .58rem;
-background:var(–panel);border:1px solid var(–b1);border-radius:3px;
-color:var(–txt);font-family:‘JetBrains Mono’,monospace;font-size:.76rem;
-outline:none;transition:border-color .15s,box-shadow .15s;
+.logo { display: flex; align-items: center; gap: .7rem; min-width: 0; }
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--accent);
+  color: white;
+  font-weight: 800;
+  font-size: .72rem;
+  letter-spacing: -.03em;
+  flex: 0 0 auto;
 }
-input:focus,select:focus,textarea:focus{border-color:var(–acc);box-shadow:0 0 0 2px rgba(245,166,35,.1)}
-select option{background:var(–panel);color:var(–txt)}
-textarea{resize:vertical;min-height:85px;line-height:1.5}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.3rem}
-.chk{display:flex;align-items:center;gap:.4rem;font-size:.74rem;color:var(–txt);cursor:pointer;margin-top:.28rem}
-.chk input[type=checkbox]{accent-color:var(–acc);width:12px;height:12px;flex-shrink:0}
-.tog-row{display:flex;align-items:center;justify-content:space-between;padding:.38rem 0;border-bottom:1px solid var(–b1)}
-.tog-row:last-child{border-bottom:none}
-.tog-row label{font-size:.74rem;color:var(–txt);cursor:pointer}
-.tog-row input[type=checkbox]{accent-color:var(–acc)}
-.muted-note{font-size:.62rem;color:var(–dim);margin-top:.3rem;line-height:1.5}
-
-/* ── BUTTONS ─────────────────────────────────────── */
-.btn{
-display:inline-flex;align-items:center;justify-content:center;gap:.3rem;
-padding:.42rem .75rem;border:none;border-radius:3px;cursor:pointer;
-font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:.7rem;
-letter-spacing:1.5px;text-transform:uppercase;transition:all .15s;
+.logo-txt {
+  color: var(--heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -.01em;
+  line-height: 1.1;
 }
-.btn-acc{background:var(–acc);color:#000;box-shadow:0 0 14px var(–glow)}
-.btn-acc:hover{filter:brightness(1.12);box-shadow:0 0 22px var(–glow)}
-.btn-acc:active{transform:scale(.97)}
-.btn-acc:disabled{background:var(–faint);color:var(–dim);box-shadow:none;cursor:not-allowed}
-.btn-ghost{background:transparent;color:var(–dim);border:1px solid var(–b1)}
-.btn-ghost:hover{color:var(–txt);border-color:var(–b2)}
-.btn-del{background:transparent;color:var(–red);border:1px solid rgba(224,64,64,.2)}
-.btn-del:hover{background:rgba(224,64,64,.06)}
-.btn-sm{padding:.24rem .48rem;font-size:.6rem}
-.btn-full{width:100%}
-.btn-row{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.5rem}
-/* big CTA with shimmer */
-.cta{
-width:100%;padding:.72rem;font-size:.78rem;letter-spacing:2px;
-margin-top:.55rem;position:relative;overflow:hidden;
+.logo-txt span { color: var(--accent); }
+.logo-sub {
+  margin-top: .14rem;
+  color: var(--muted);
+  font-size: .68rem;
+  line-height: 1;
 }
-.cta::after{
-content:’’;position:absolute;inset:0;pointer-events:none;
-background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
-transform:translateX(-100%);transition:transform .45s;
+.topbar-r { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+#topInfo {
+  color: var(--muted);
+  font-size: .72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.cta:not(:disabled):hover::after{transform:translateX(100%)}
-
-/* ── STATS BAR ───────────────────────────────────── */
-.stats-bar{display:flex;background:var(–b1);gap:1px;border-bottom:1px solid var(–b1);flex-shrink:0}
-.stat{background:var(–surf);padding:.6rem .9rem;flex:1;display:flex;flex-direction:column;gap:.12rem}
-.sv{font-family:‘JetBrains Mono’,monospace;font-size:1.05rem;font-weight:700;color:var(–acc);line-height:1}
-.sl{font-size:.52rem;color:var(–dim);letter-spacing:1.5px;text-transform:uppercase}
-
-/* ── CONTENT ─────────────────────────────────────── */
-.content{flex:1;overflow-y:auto;padding:1.1rem;display:flex;flex-direction:column;gap:.9rem}
-
-/* ── PANELS ──────────────────────────────────────── */
-.panel{background:var(–panel);border:1px solid var(–b1);border-radius:4px;overflow:hidden}
-.ph{padding:.58rem .85rem;border-bottom:1px solid var(–b1);display:flex;align-items:center;justify-content:space-between}
-.pt{font-family:‘JetBrains Mono’,monospace;font-size:.58rem;letter-spacing:2px;color:var(–dim);text-transform:uppercase}
-.pb{padding:.8rem .85rem}
-.pf{padding:.5rem .85rem;border-top:1px solid var(–b1);display:flex;gap:.35rem;align-items:center}
-
-/* ── CANVAS ──────────────────────────────────────── */
-.cvs-wrap{background:var(–panel);border:1px solid var(–b1);border-radius:4px;position:relative;overflow:hidden}
-.cvs-wrap canvas{display:block;width:100%}
-.cvs-info{position:absolute;top:.55rem;right:.7rem;font-family:‘JetBrains Mono’,monospace;font-size:.55rem;color:var(–dim);letter-spacing:1px}
-
-/* ── CODE BOX ────────────────────────────────────── */
-.code-box{
-background:var(–cbg);padding:.75rem .85rem;
-font-family:‘JetBrains Mono’,monospace;font-size:.66rem;
-word-break:break-all;max-height:110px;overflow:auto;
-color:var(–cclr);line-height:1.65;letter-spacing:.3px;
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
 }
-.log-txt{font-family:‘JetBrains Mono’,monospace;font-size:.62rem;color:var(–dim)}
-.log-txt .ok{color:var(–grn)}.log-txt .warn{color:var(–acc)}.log-txt .err{color:var(–red)}
-#debugLog{background:var(–cbg);padding:.6rem .85rem;font-family:‘JetBrains Mono’,monospace;font-size:.6rem;color:var(–dim);line-height:1.9;max-height:170px;overflow-y:auto}
+.theme-toggle:hover { border-color: var(--border-strong); background: var(--card); color: var(--heading); }
 
-/* ── DROP ZONE ───────────────────────────────────── */
-.drop-zone{
-border:2px dashed var(–b1);border-radius:3px;padding:1rem;text-align:center;
-cursor:pointer;transition:all .15s;font-size:.7rem;color:var(–dim);position:relative;margin-top:.45rem;
+/* Mode navigation */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  min-height: 54px;
+  padding: .5rem 1.5rem;
+  overflow-x: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
-.drop-zone.over{border-color:var(–acc);background:var(–alo);color:var(–acc)}
-.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-
-/* ── LINES LIST ──────────────────────────────────── */
-.lines-list{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:.28rem}
-.li{display:flex;align-items:center;gap:.5rem;background:var(–card);border:1px solid var(–b1);border-radius:3px;padding:.42rem .65rem;transition:border-color .12s}
-.li:hover{border-color:var(–b2)}
-.id-badge{font-family:‘JetBrains Mono’,monospace;font-size:.56rem;font-weight:700;background:var(–alo);color:var(–acc);border:1px solid var(–abd);padding:.1rem .35rem;border-radius:2px;min-width:36px;text-align:center;flex-shrink:0}
-.li-info{flex:1;min-width:0}
-.li-name{font-size:.56rem;color:var(–acc);margin-bottom:.06rem}
-.li-meta{font-family:‘JetBrains Mono’,monospace;font-size:.6rem;color:var(–txt)}
-.li-coords{font-size:.53rem;color:var(–dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.empty-st{text-align:center;padding:1.75rem .5rem;color:var(–dim)}
-.empty-st div{font-size:1.8rem;opacity:.16;margin-bottom:.35rem}
-.empty-st p{font-size:.7rem;line-height:1.6}
-
-/* ── INFO BOX ────────────────────────────────────── */
-.info{background:var(–alo);border:1px solid var(–abd);border-left:3px solid var(–acc);border-radius:3px;padding:.5rem .75rem;font-size:.68rem;color:var(–dim);line-height:1.7;margin-bottom:.5rem}
-.info b{color:var(–acc)}
-
-/* ── PIXEL ART ───────────────────────────────────── */
-.px-grid{display:grid;grid-template-columns:1fr 270px;gap:.9rem}
-.px-preview{background:var(–panel);border:1px solid var(–b1);border-radius:4px;overflow:hidden}
-.px-preview canvas{display:block;width:100%}
-.map-row{display:flex;align-items:center;gap:.45rem;padding:.32rem 0;border-bottom:1px solid var(–b1)}
-.map-row:last-child{border-bottom:none}
-.swatch{width:13px;height:13px;border-radius:2px;flex-shrink:0}
-.map-row span{font-size:.66rem;color:var(–dim);flex:1}
-.map-row input{width:54px!important;text-align:center;padding:.28rem .35rem!important;font-size:.72rem!important}
-
-/* ── TOAST ───────────────────────────────────────── */
-.toast{
-position:fixed;bottom:1.4rem;right:1.4rem;z-index:10000;pointer-events:none;
-background:var(–panel);border:1px solid var(–acc);border-radius:4px;
-padding:.55rem .95rem;font-family:‘JetBrains Mono’,monospace;font-size:.68rem;
-color:var(–acc);letter-spacing:1px;
-box-shadow:0 8px 30px var(–shad),0 0 16px var(–glow);
-transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.64,1);
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem .8rem;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
 }
-.toast.show{transform:translateY(0);opacity:1}
+.tab:hover { background: var(--card); color: var(--text); }
+.tab.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+.pill {
+  padding: .16rem .4rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-size: .58rem;
+  font-weight: 700;
+}
 
-/* ── DISABLED ────────────────────────────────────── */
-.greyed{opacity:.38;pointer-events:none}
+/* App layout */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(300px, 350px) minmax(0, 1fr);
+  min-height: calc(100vh - 118px);
+}
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: calc(100vh - 118px);
+}
+.main { min-width: 0; display: flex; flex-direction: column; min-height: 0; }
 
-/* ── SCROLLBAR ───────────────────────────────────── */
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(–faint);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(–dim)}
+/* Sidebar sections */
+.step {
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: 0; }
+.step-hd {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-bottom: .8rem;
+}
+.step-num {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 700;
+}
+.step-lbl {
+  color: var(--heading);
+  font-size: .82rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
 
-@media(max-width:860px){
-.workspace{grid-template-columns:1fr}
-.sidebar{border-right:none;border-bottom:1px solid var(–b1)}
-.px-grid{grid-template-columns:1fr}
+.field { margin-bottom: .7rem; }
+.field:last-child { margin-bottom: 0; }
+.field > label {
+  display: block;
+  margin-bottom: .35rem;
+  color: var(--text);
+  font-size: .72rem;
+  font-weight: 600;
+}
+input[type="text"], input[type="number"], select, textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: .55rem .65rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  outline: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-size: .78rem;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+input[type="text"]:hover, input[type="number"]:hover, select:hover, textarea:hover { border-color: var(--border-strong); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+textarea { min-height: 108px; resize: vertical; line-height: 1.5; }
+select option { background: var(--surface); color: var(--text); }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; }
+.chk {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .35rem;
+  color: var(--text);
+  font-size: .75rem;
+  cursor: pointer;
+}
+.chk input[type="checkbox"], .tog-row input[type="checkbox"] { accent-color: var(--accent); }
+.tog-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .65rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.tog-row label { color: var(--text); font-size: .75rem; cursor: pointer; }
+.muted-note { margin-top: .4rem; color: var(--muted); font-size: .68rem; line-height: 1.55; }
+
+/* Info / actions */
+.info {
+  margin-bottom: .7rem;
+  padding: .7rem .75rem;
+  border: 1px solid var(--accent-border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--muted);
+  font-size: .71rem;
+  line-height: 1.6;
+}
+.info b { color: var(--heading); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  min-height: 38px;
+  padding: .55rem .8rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .76rem;
+  font-weight: 650;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-acc { background: var(--accent); color: #fff; }
+.btn-acc:hover { filter: brightness(1.04); }
+.btn-acc:disabled { opacity: .55; cursor: not-allowed; }
+.btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+.btn-ghost:hover { background: var(--card); color: var(--heading); }
+.btn-del { background: transparent; color: var(--danger); border-color: rgba(220,38,38,.25); }
+.btn-del:hover { background: rgba(220,38,38,.06); }
+.btn-sm { min-height: 32px; padding: .4rem .6rem; font-size: .68rem; }
+.btn-full { width: 100%; }
+.btn-row { display: flex; gap: .45rem; flex-wrap: wrap; margin-top: .6rem; }
+.cta { width: 100%; margin-top: .6rem; min-height: 42px; }
+
+/* Metrics */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat {
+  min-width: 0;
+  padding: .75rem .9rem;
+  background: var(--surface);
+}
+.sv {
+  color: var(--heading);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sl {
+  margin-top: .22rem;
+  color: var(--muted);
+  font-size: .63rem;
+  font-weight: 600;
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.cvs-wrap {
+  min-height: 320px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.cvs-wrap canvas { display: block; width: 100%; }
+.cvs-info {
+  position: absolute;
+  top: .75rem;
+  right: .8rem;
+  padding: .28rem .45rem;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, .72);
+  color: #e2e8f0;
+  font-size: .62rem;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+}
+.panel {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.ph {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .7rem .9rem;
+  border-bottom: 1px solid var(--border);
+}
+.pt {
+  color: var(--heading);
+  font-size: .76rem;
+  font-weight: 650;
+}
+.pb { padding: .9rem; }
+.pf {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .65rem .9rem;
+  border-top: 1px solid var(--border);
+}
+.log-txt { color: var(--muted); font-size: .68rem; }
+.log-txt .ok { color: var(--success); }
+.log-txt .warn { color: var(--accent); }
+.log-txt .err { color: var(--danger); }
+
+.code-box {
+  max-height: 180px;
+  overflow: auto;
+  padding: .9rem;
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .69rem;
+  line-height: 1.6;
+  word-break: break-all;
+}
+#debugLog {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: .75rem .9rem;
+  background: var(--code-bg);
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .65rem;
+  line-height: 1.75;
+}
+
+.drop-zone {
+  position: relative;
+  margin-top: .55rem;
+  padding: 1rem;
+  text-align: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: .72rem;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+.drop-zone:hover, .drop-zone.over { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.drop-zone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+.lines-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: .4rem; }
+.li {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem .65rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.li:hover { border-color: var(--border-strong); }
+.id-badge {
+  min-width: 40px;
+  padding: .23rem .35rem;
+  text-align: center;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  font-size: .65rem;
+  font-weight: 700;
+}
+.li-info { flex: 1; min-width: 0; }
+.li-name { margin-bottom: .08rem; color: var(--accent); font-size: .66rem; font-weight: 600; }
+.li-meta { color: var(--text); font-size: .65rem; }
+.li-coords { color: var(--muted); font-size: .6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty-st { padding: 2rem .7rem; text-align: center; color: var(--muted); }
+.empty-st div { margin-bottom: .45rem; color: var(--border-strong); font-size: 1.7rem; }
+.empty-st p { font-size: .72rem; line-height: 1.55; }
+
+.px-grid { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 1rem; }
+.px-preview { overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+.px-preview canvas { display: block; width: 100%; }
+.map-row { display: flex; align-items: center; gap: .55rem; padding: .5rem 0; border-bottom: 1px solid var(--border); }
+.map-row:last-child { border-bottom: 0; }
+.swatch { width: 16px; height: 16px; border-radius: 4px; flex: 0 0 auto; }
+.map-row span { flex: 1; color: var(--text); font-size: .72rem; }
+.map-row input { width: 58px !important; min-height: 34px !important; padding: .4rem .35rem !important; text-align: center; }
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10000;
+  max-width: min(360px, calc(100vw - 2rem));
+  padding: .7rem .9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--heading);
+  box-shadow: var(--shadow);
+  font-size: .74rem;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.greyed { opacity: .45; pointer-events: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+@media (max-width: 1100px) {
+  .workspace { grid-template-columns: 310px minmax(0, 1fr); }
+  .px-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 860px) {
+  .topbar { padding: 0 1rem; }
+  #topInfo { display: none; }
+  .tabs { padding: .45rem 1rem; }
+  .workspace { grid-template-columns: 1fr; }
+  .sidebar { max-height: none; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 1rem; }
+}
+
+@media (max-width: 620px) {
+  .stats-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats-bar .stat:last-child { grid-column: span 2; }
+  .g2 { grid-template-columns: 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .step { padding: .9rem 1rem; }
 }
 </style>
 
@@ -257,8 +538,8 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
 <div class="topbar">
   <div class="logo">
-    <div class="logo-gem"></div>
-    <div class="logo-txt">Poly<span>Track</span> Studio</div>
+    <div class="logo-mark">PT</div>
+    <div><div class="logo-txt">Poly<span>Track</span></div><div class="logo-sub">Track Builder</div></div>
   </div>
   <div class="topbar-r">
     <div id="topInfo">SELECT A MODE TO BEGIN</div>
@@ -269,9 +550,9 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 <!-- MODE TABS -->
 
 <div class="tabs">
-  <div class="tab on" id="tab-kml" onclick="switchMode('kml')">🗺 KML Circuit <span class="pill">1:1 SCALE</span></div>
-  <div class="tab" id="tab-shape" onclick="switchMode('shape')">◈ Shape Builder</div>
-  <div class="tab" id="tab-pixel" onclick="switchMode('pixel')">🎨 Pixel Art</div>
+  <div class="tab on" id="tab-kml" onclick="switchMode('kml')">KML Circuit <span class="pill">1:1 scale</span></div>
+  <div class="tab" id="tab-shape" onclick="switchMode('shape')">Shape Builder</div>
+  <div class="tab" id="tab-pixel" onclick="switchMode('pixel')">Pixel Art</div>
 </div>
 
 <!-- WORKSPACE -->
@@ -287,7 +568,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Load your KML path</div></div>
     <div class="info">
       In <b>Google Earth</b>, draw a path along a road, then <b>right-click → Save Place As → KML</b>.<br>
-      <b>1 block = 20 × 20 m</b> — exact real-world scale.
+      <b>1 block = 20 × 20 m</b> - exact real-world scale.
     </div>
     <div class="field">
       <label>Paste KML content</label>
@@ -295,7 +576,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     </div>
     <div class="drop-zone" id="dropZone">
       <input type="file" id="fileInput" accept=".kml,.xml">
-      <div style="font-size:1.15rem;margin-bottom:.2rem">📂</div>
+      <div style="font-size:1.15rem;margin-bottom:.2rem">Upload</div>
       <div>Or drop a .kml file here</div>
     </div>
   </div>
@@ -322,14 +603,14 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
       <label for="useElevation">Use real elevation (Y axis)</label>
       <input type="checkbox" id="useElevation">
     </div>
-    <div class="muted-note" id="elevNote" style="display:none">Queries <b>open-elevation.com</b> for real terrain altitude at each path point. Requires internet. Hill blocks (ID 145/146) are placed on slopes — each ramp = 40 m horizontal, 10 m rise.</div>
+    <div class="muted-note" id="elevNote" style="display:none">Queries <b>open-elevation.com</b> for real terrain altitude at each path point. Requires internet. Hill blocks (ID 145/146) are placed on slopes - each ramp = 40 m horizontal, 10 m rise.</div>
   </div>
 
   <div class="step">
     <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
     <div class="field"><label>Track name</label><input type="text" id="kmlTrackName" value="My Circuit" maxlength="50"></div>
     <div class="field"><label>Author</label><input type="text" id="kmlAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" id="kmlBtn" onclick="generateKML()">⚡ Generate Circuit Code</button>
+    <button class="btn btn-acc cta" id="kmlBtn" onclick="generateKML()">Generate Circuit Code</button>
   </div>
 
 </div><!-- /sb-kml -->
@@ -343,31 +624,30 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <div class="field">
       <label>Shape type</label>
       <select id="shapeType">
-        <option value="line">Line — point A to point B</option>
-        <option value="filledRect">Filled Rectangle — flat plane</option>
-        <option value="hollowCube">Hollow Cube — walls only</option>
-        <option value="filledCube">Filled Cube — solid volume</option>
+        <option value="line">Line - point A to point B</option>
+        <option value="filledRect">Filled Rectangle - flat plane</option>
+        <option value="hollowCube">Hollow Cube - walls only</option>
+        <option value="filledCube">Filled Cube - solid volume</option>
       </select>
     </div>
 
-```
 <div id="form-line" class="sf">
   <div class="field"><label>Block ID</label><input type="number" id="lineId" value="25" min="0" max="255"></div>
-  <div class="field"><label>Start — X · Y · Z</label>
+  <div class="field"><label>Start - X · Y · Z</label>
     <div class="g3"><input type="number" id="lsx" value="0"><input type="number" id="lsy" value="0"><input type="number" id="lsz" value="0"></div>
   </div>
-  <div class="field"><label>End — X · Y · Z</label>
+  <div class="field"><label>End - X · Y · Z</label>
     <div class="g3"><input type="number" id="lex" value="100"><input type="number" id="ley" value="0"><input type="number" id="lez" value="0"></div>
   </div>
-  <div class="field"><label>Rotation (0–3)</label><input type="number" id="lineRot" value="0" min="0" max="3"></div>
+  <div class="field"><label>Rotation (0-3)</label><input type="number" id="lineRot" value="0" min="0" max="3"></div>
 </div>
 
 <div id="form-filledRect" class="sf" style="display:none">
   <div class="field"><label>Plane orientation</label>
     <select id="rectPlane">
-      <option value="xz">XZ — horizontal (floor / ceiling)</option>
-      <option value="xy">XY — vertical (front / back wall)</option>
-      <option value="yz">YZ — vertical (left / right wall)</option>
+      <option value="xz">XZ - horizontal (floor / ceiling)</option>
+      <option value="xy">XY - vertical (front / back wall)</option>
+      <option value="yz">YZ - vertical (left / right wall)</option>
     </select>
   </div>
   <div class="field"><label id="fixedLabel">Fixed Y</label><input type="number" id="fixedCoord" value="0"></div>
@@ -386,10 +666,10 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 </div>
 
 <div id="form-hollowCube" class="sf" style="display:none">
-  <div class="field"><label>Min corner — X · Y · Z</label>
+  <div class="field"><label>Min corner - X · Y · Z</label>
     <div class="g3"><input type="number" id="hcMinX" value="0"><input type="number" id="hcMinY" value="0"><input type="number" id="hcMinZ" value="0"></div>
   </div>
-  <div class="field"><label>Max corner — X · Y · Z</label>
+  <div class="field"><label>Max corner - X · Y · Z</label>
     <div class="g3"><input type="number" id="hcMaxX" value="100"><input type="number" id="hcMaxY" value="100"><input type="number" id="hcMaxZ" value="100"></div>
   </div>
   <div class="g2" style="margin-top:.35rem">
@@ -399,10 +679,10 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 </div>
 
 <div id="form-filledCube" class="sf" style="display:none">
-  <div class="field"><label>Min corner — X · Y · Z</label>
+  <div class="field"><label>Min corner - X · Y · Z</label>
     <div class="g3"><input type="number" id="fcMinX" value="0"><input type="number" id="fcMinY" value="0"><input type="number" id="fcMinZ" value="0"></div>
   </div>
-  <div class="field"><label>Max corner — X · Y · Z</label>
+  <div class="field"><label>Max corner - X · Y · Z</label>
     <div class="g3"><input type="number" id="fcMaxX" value="100"><input type="number" id="fcMaxY" value="100"><input type="number" id="fcMaxZ" value="100"></div>
   </div>
   <div class="g2" style="margin-top:.35rem">
@@ -412,7 +692,6 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 </div>
 
 <button class="btn btn-acc btn-full" onclick="addShape()" style="margin-top:.55rem">+ Add Shape</button>
-```
 
   </div>
 
@@ -429,7 +708,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
   <div class="step">
     <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">ID test track (optional)</div></div>
-    <div class="info">Generates one block of every ID in a row — useful for seeing what each block type looks like in-game.</div>
+    <div class="info">Generates one block of every ID in a row - useful for seeing what each block type looks like in-game.</div>
     <div class="g2">
       <div class="field" style="margin:0"><label>Min ID</label><input type="number" id="minId" value="1" min="0" max="255"></div>
       <div class="field" style="margin:0"><label>Max ID</label><input type="number" id="maxId" value="50" min="0" max="255"></div>
@@ -444,11 +723,10 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
       <b>Hill = ramp up + ramp down.</b> Each half is 4 blocks long. Total: 80 m long, 20 m high.
     </div>
 
-```
 <!-- Rotation diagram -->
 <div id="hillDiagram" style="margin-bottom:.65rem;background:var(--card);border:1px solid var(--b1);border-radius:4px;padding:.6rem;text-align:center">
   <canvas id="hillCanvas" width="240" height="160" style="display:block;margin:0 auto"></canvas>
-  <div style="font-size:.6rem;color:var(--dim);margin-top:.35rem;letter-spacing:1px">ROTATION PREVIEW — drag angle or type below</div>
+  <div style="font-size:.6rem;color:var(--dim);margin-top:.35rem;letter-spacing:1px">ROTATION PREVIEW - drag angle or type below</div>
 </div>
 
 <div class="field">
@@ -465,7 +743,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
   </div>
 </div>
 
-<div class="field"><label>Hill base position — X · Y · Z</label>
+<div class="field"><label>Hill base position - X · Y · Z</label>
   <div class="g3">
     <input type="number" id="hillX" value="0" placeholder="X">
     <input type="number" id="hillY" value="0" placeholder="Y">
@@ -477,8 +755,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
   <input type="number" id="hillWidth" value="1" min="1" max="20">
 </div>
 
-<button class="btn btn-acc btn-full" onclick="addHill()" style="margin-top:.1rem">⛰ Add Hill to List</button>
-```
+<button class="btn btn-acc btn-full" onclick="addHill()" style="margin-top:.1rem">Add Hill to List</button>
 
   </div>
 
@@ -486,7 +763,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <div class="step-hd"><div class="step-num">5</div><div class="step-lbl">Name &amp; generate</div></div>
     <div class="field"><label>Track name</label><input type="text" id="shapeTrackName" value="My Track" maxlength="50"></div>
     <div class="field"><label>Author</label><input type="text" id="shapeAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" onclick="generateShape()">⚡ Generate Track Code</button>
+    <button class="btn btn-acc cta" onclick="generateShape()">Generate Track Code</button>
   </div>
 
 </div><!-- /sb-shape -->
@@ -529,7 +806,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 
   <div class="step">
     <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">Position in world</div></div>
-    <div class="field"><label>Offset — X · Y · Z</label>
+    <div class="field"><label>Offset - X · Y · Z</label>
       <div class="g3">
         <input type="number" id="offsetX" value="0" placeholder="X">
         <input type="number" id="offsetY" value="0" placeholder="Y">
@@ -542,7 +819,7 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Name &amp; generate</div></div>
     <div class="field"><label>Track name</label><input type="text" id="pixelTrackName" value="Pixel Art" maxlength="50"></div>
     <div class="field"><label>Author</label><input type="text" id="pixelAuthor" value="Builder" maxlength="50"></div>
-    <button class="btn btn-acc cta" onclick="generatePixel()">⚡ Generate Pixel Track</button>
+    <button class="btn btn-acc cta" onclick="generatePixel()">Generate Pixel Track</button>
   </div>
 
 </div><!-- /sb-pixel -->
@@ -553,16 +830,15 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
 <div class="main">
 
   <div class="stats-bar">
-    <div class="stat"><div class="sv" id="sA">—</div><div class="sl" id="slA">—</div></div>
-    <div class="stat"><div class="sv" id="sB">—</div><div class="sl" id="slB">—</div></div>
-    <div class="stat"><div class="sv" id="sC">—</div><div class="sl" id="slC">—</div></div>
-    <div class="stat"><div class="sv" id="sD">—</div><div class="sl" id="slD">—</div></div>
-    <div class="stat"><div class="sv" id="sE">—</div><div class="sl">Code Size</div></div>
+    <div class="stat"><div class="sv" id="sA">-</div><div class="sl" id="slA">-</div></div>
+    <div class="stat"><div class="sv" id="sB">-</div><div class="sl" id="slB">-</div></div>
+    <div class="stat"><div class="sv" id="sC">-</div><div class="sl" id="slC">-</div></div>
+    <div class="stat"><div class="sv" id="sD">-</div><div class="sl" id="slD">-</div></div>
+    <div class="stat"><div class="sv" id="sE">-</div><div class="sl">Code Size</div></div>
   </div>
 
   <div class="content">
 
-```
 <!-- KML canvas (shown only in kml mode) -->
 <div class="cvs-wrap" id="kmlWrap">
   <canvas id="kmlCanvas" height="310"></canvas>
@@ -580,10 +856,10 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
           <div class="sv" id="pixCount" style="font-size:.9rem">0</div><div class="sl">Pixels</div>
         </div>
         <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
-          <div class="sv" id="pixW" style="font-size:.9rem">—</div><div class="sl">Width</div>
+          <div class="sv" id="pixW" style="font-size:.9rem">-</div><div class="sl">Width</div>
         </div>
         <div class="stat" style="flex:0 0 auto;border:1px solid var(--b1);border-radius:3px;padding:.45rem .75rem">
-          <div class="sv" id="pixH" style="font-size:.9rem">—</div><div class="sl">Height</div>
+          <div class="sv" id="pixH" style="font-size:.9rem">-</div><div class="sl">Height</div>
         </div>
       </div>
     </div>
@@ -600,10 +876,10 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <span class="pt">Track Code Output</span>
     <span class="log-txt" id="logBox"></span>
   </div>
-  <div class="code-box" id="outputCode">Generate a track using any mode above — the PolyTrack import code will appear here.</div>
+  <div class="code-box" id="outputCode">Generate a track using any mode above - the PolyTrack import code will appear here.</div>
   <div class="pf">
-    <button class="btn btn-ghost btn-sm" onclick="copyCode()">📋 Copy</button>
-    <button class="btn btn-ghost btn-sm" onclick="downloadCode()">⬇ Download .txt</button>
+    <button class="btn btn-ghost btn-sm" onclick="copyCode()">Copy</button>
+    <button class="btn btn-ghost btn-sm" onclick="downloadCode()">Download .txt</button>
   </div>
 </div>
 
@@ -618,14 +894,12 @@ transform:translateY(60px);opacity:0;transition:all .24s cubic-bezier(.34,1.56,.
     <div class="pf"><button class="btn btn-ghost btn-sm" onclick="clearDbg()">Clear</button></div>
   </div>
 </div>
-```
 
   </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /workspace -->
 
 <div class="toast" id="toast"></div>
-
 <script>
 'use strict';
 
@@ -678,7 +952,7 @@ function dbg(msg,c=''){
   const ts=new Date().toLocaleTimeString('en',{hour12:false});
   _dl.push({ts,msg,c});if(_dl.length>200)_dl.shift();
   const el=document.getElementById('debugLog');if(!el)return;
-  const C={err:'#e04040',warn:'#f5a623',ok:'#3dd68c','':'#3a6060'};
+  const C={err:'#dc2626',warn:'#2563eb',ok:'#16a34a','':'#3a6060'};
   el.innerHTML=_dl.map(l=>`<div style="color:${C[l.c]||C['']}">[${l.ts}] ${l.msg}</div>`).join('');
   el.scrollTop=el.scrollHeight;
 }
@@ -713,7 +987,7 @@ function switchMode(m){
   }[m];
   if(m==='shape')refreshShapeUI();
 }
-function setStat(id,v){document.getElementById('s'+id).textContent=v??'—';}
+function setStat(id,v){document.getElementById('s'+id).textContent=v??'-';}
 
 // ══════════════════════════════════════════════════
 // ENCODING ENGINE (shared)
@@ -767,7 +1041,7 @@ function buildBinary(ll){
       if([91,92,93].includes(+id))wU32(bin,0);
     }
   }
-  dbg(`Binary: ${bin.length} bytes — IDs: ${Object.keys(g).map(id=>`${id}×${g[id].length}`).join(', ')}`,'ok');
+  dbg(`Binary: ${bin.length} bytes - IDs: ${Object.keys(g).map(id=>`${id}×${g[id].length}`).join(', ')}`,'ok');
   return new Uint8Array(bin);
 }
 
@@ -787,7 +1061,7 @@ function emitCode(code){
   gCode=code;
   document.getElementById('outputCode').textContent=code;
   setStat('E',(code.length/1024).toFixed(1)+' KB');
-  log(`Done — ${code.length} chars`,'ok');
+  log(`Done - ${code.length} chars`,'ok');
   dbg(`Encoded: ${code.length} chars`,'ok');
 }
 function copyCode(){
@@ -812,7 +1086,7 @@ function parseKML(txt){
   txt=txt.replace(/^\uFEFF/,'').replace(/<\?xml[^>]*\?>\s*/i,'');
   const doc=new DOMParser().parseFromString(txt,'text/xml');
   const el=doc.querySelector('coordinates')||doc.getElementsByTagNameNS('http://www.opengis.net/kml/2.2','coordinates')[0];
-  if(!el)throw new Error('No <coordinates> found — paste a valid KML path file.');
+  if(!el)throw new Error('No <coordinates> found - paste a valid KML path file.');
   const coords=[];
   for(const pt of el.textContent.trim().split(/\s+/)){
     const p=pt.split(',').map(Number);
@@ -850,7 +1124,7 @@ function angleBetween(ax,az,bx,bz){
   if(!la||!lb)return 0;
   return Math.acos(Math.max(-1,Math.min(1,dot/(la*lb))))*180/Math.PI;
 }
-// Ramp rotation table — confirmed from 4-direction decode
+// Ramp rotation table - confirmed from 4-direction decode
 // cardinal: 0=-Z  1=-X  2=+Z  3=+X
 const RAMP_ROTS=[
   {asc145:0,asc146:2,dsc146:0,dsc145:2}, // -Z
@@ -969,7 +1243,7 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
       const step=(n)=>{ cx+=stepX*n; cz+=stepZ*n; };
 
       if(nRamps===0){
-        // No elevation change in this segment — use line3D for correct diagonal staircasing
+        // No elevation change in this segment - use line3D for correct diagonal staircasing
         const nx2=Math.abs(ddx)>=Math.abs(ddz)?0:1, nz2=nx2?0:1;
         const center=line3D(a.bx,surface_y,a.bz,b.bx,surface_y,b.bz);
         for(const cb of center){
@@ -992,7 +1266,7 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
           surface_y += 4;
         }
         // FIX: cursor is now at ID146's exit edge. Skip past it before placing flat.
-        // (The ramp block's footprint covers its own exit edge — no flat block there.)
+        // (The ramp block's footprint covers its own exit edge - no flat block there.)
         step(CS);
         // Fill remaining flat road. flatDone starts at CS to account for the skip above.
         let flatDone=CS;
@@ -1042,7 +1316,7 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
   // ── Checkpoint detection from pre-snap local coords ──────────────────
   // Uses local[] (full KML resolution) so tight corners snapped to the same
   // grid cell aren't missed. Checkpoints are never placed near ramp modules:
-  // a ramp zone occupies nRamps×16 coord units — a checkpoint landing inside
+  // a ramp zone occupies nRamps×16 coord units - a checkpoint landing inside
   // one would float in the air before the ramp reaches that height.
   //
   // For each detected corner, we check whether the nearest pts segment has any
@@ -1058,7 +1332,7 @@ function kmlPathToLines(local,ox,oy,oz,rw,thr,useElev){
     let sx=(Math.round(cur.x/20)+ox)*CS;
     let sz=(Math.round(cur.z/20)+oz)*CS;
     // Find the pts segment that contains this snapped position
-    // and check if there are ramps in it — if so, push past the ramp zone.
+    // and check if there are ramps in it - if so, push past the ramp zone.
     let cpY=pts[0].by;
     for(let j=0;j<pts.length-1;j++){
       const pa=pts[j], pb=pts[j+1];
@@ -1125,7 +1399,7 @@ function drawKMLCanvas(blockPts,cps){
   const ctx=canvas.getContext('2d');
   const W=canvas.offsetWidth||800;canvas.width=W;
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
-  ctx.fillStyle=dark?'#08090f':'#f0f2f8';ctx.fillRect(0,0,W,canvas.height);
+  ctx.fillStyle=dark?'#08090f':'#f5f7fb';ctx.fillRect(0,0,W,canvas.height);
   if(!blockPts||blockPts.length<2){return;}
   const xs=blockPts.map(p=>p.bx),zs=blockPts.map(p=>p.bz);
   const mnX=Math.min(...xs),mxX=Math.max(...xs),mnZ=Math.min(...zs),mxZ=Math.max(...zs);
@@ -1141,7 +1415,7 @@ function drawKMLCanvas(blockPts,cps){
   const ys=blockPts.map(p=>p.by);
   const mnY=Math.min(...ys),mxY=Math.max(...ys),rY=mxY-mnY||1;
 
-  // Draw track — colour by elevation if active, else plain amber
+  // Draw track - colour by elevation if active, else plain amber
   ctx.lineWidth=Math.max(1.5,sc*.65);ctx.lineJoin='round';ctx.lineCap='round';
   if(useElev && rY>0){
     // Draw segment by segment with elevation colour (blue=low → red=high)
@@ -1157,7 +1431,7 @@ function drawKMLCanvas(blockPts,cps){
     }
     ctx.shadowBlur=0;
   } else {
-    const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#f5a623';
+    const acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#2563eb';
     ctx.shadowColor=acc;ctx.shadowBlur=5;ctx.strokeStyle=acc;
     ctx.beginPath();
     const{cx:sx0,cy:sz0}=toC(blockPts[0].bx,blockPts[0].bz);ctx.moveTo(sx0,sz0);
@@ -1170,17 +1444,17 @@ function drawKMLCanvas(blockPts,cps){
   for(const cp of cps){const{cx,cy}=toC(cp.bx,cp.bz);ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();}
   // Start dot
   const{cx:sc2,cy:sy}=toC(blockPts[0].bx,blockPts[0].bz);
-  ctx.shadowBlur=10;ctx.shadowColor='#3dd68c';ctx.fillStyle='#3dd68c';
+  ctx.shadowBlur=10;ctx.shadowColor='#16a34a';ctx.fillStyle='#16a34a';
   ctx.beginPath();ctx.arc(sc2,sy,5.5,0,Math.PI*2);ctx.fill();
   // Finish dot
   const{cx:fc,cy:fy}=toC(blockPts[blockPts.length-1].bx,blockPts[blockPts.length-1].bz);
-  ctx.shadowColor='#e04040';ctx.fillStyle='#e04040';
+  ctx.shadowColor='#dc2626';ctx.fillStyle='#dc2626';
   ctx.beginPath();ctx.arc(fc,fy,5.5,0,Math.PI*2);ctx.fill();
   ctx.shadowBlur=0;
   // Labels
   ctx.font='10px "JetBrains Mono",monospace';
-  ctx.fillStyle='#3dd68c';ctx.fillText('START',sc2+8,sy+3);
-  ctx.fillStyle='#e04040';ctx.fillText('FINISH',fc+8,fy+3);
+  ctx.fillStyle='#16a34a';ctx.fillText('START',sc2+8,sy+3);
+  ctx.fillStyle='#dc2626';ctx.fillText('FINISH',fc+8,fy+3);
 
   // Elevation colour legend
   if(useElev && rY>0){
@@ -1289,7 +1563,7 @@ async function generateKML(){
       local = toLocal(withElev);
       const alts = withElev.map(c => c.alt);
       const elevRange = Math.round(Math.max(...alts) - Math.min(...alts));
-      dbg(`Elevation range: ${Math.min(...alts).toFixed(1)}m – ${Math.max(...alts).toFixed(1)}m (${elevRange}m)`,'ok');
+      dbg(`Elevation range: ${Math.min(...alts).toFixed(1)}m - ${Math.max(...alts).toFixed(1)}m (${elevRange}m)`,'ok');
       setStat('D', elevRange+'m'); document.getElementById('slD').textContent='Elev Range';
     } else {
       setStat('D',(dist/1000).toFixed(2)+' km');document.getElementById('slD').textContent='Circuit Length';
@@ -1312,7 +1586,7 @@ async function generateKML(){
       document.getElementById('kmlTrackName').value||'My Circuit',
       document.getElementById('kmlAuthor').value||'Builder');
     emitCode(code);toast('Circuit generated!');
-  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');toast('Error — see debug log');}
+  }catch(e){dbg('ERROR: '+e.message,'err');log(e.message,'err');toast('Error - see debug log');}
   finally{btn.disabled=false;btn.textContent='⚡ Generate Circuit Code';}
 }
 
@@ -1460,7 +1734,7 @@ function generateTestTrack(){
   for(let i=mn;i<=mx;i++){pos+=20;gLines.push({id:i,points:line3D(pos,0,0,pos,0,0),rot:0});}
   gLines.push({id:76,points:line3D(pos+20,0,0,pos+20,0,0),rot:0});
   refreshShapeUI();
-  toast(`ID test track: IDs ${mn}–${mx}`);
+  toast(`ID test track: IDs ${mn}-${mx}`);
 }
 
 function exportJSON(){
@@ -1548,7 +1822,7 @@ function drawPixelPreview(){
   const scale=Math.min(270/w,270/h);
   const pw=Math.floor(scale*w),ph=Math.floor(scale*h);
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
-  pCtx.fillStyle=dark?'#08090f':'#f0f2f8';pCtx.fillRect(0,0,270,270);
+  pCtx.fillStyle=dark?'#08090f':'#f5f7fb';pCtx.fillRect(0,0,270,270);
   for(let y=0;y<h;y++){
     for(let x=0;x<w;x++){
       pCtx.fillStyle=BIN_CLR[pixels[y][x]];
@@ -1599,7 +1873,7 @@ async function generatePixel(){
 }
 
 // ══════════════════════════════════════════════════
-// HILL INSERTER — verified from 4-direction test track
+// HILL INSERTER - verified from 4-direction test track
 // ══════════════════════════════════════════════════
 //
 // CONFIRMED block layout (travel -Z, starting from flat at z=0):
@@ -1675,22 +1949,22 @@ function drawHillDiagram(deg, cardinal) {
   const W = 240, H = 160;
   ctx.clearRect(0, 0, W, H);
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  ctx.fillStyle = dark ? '#161c2d' : '#f0f2f8';
+  ctx.fillStyle = dark ? '#1e293b' : '#f5f7fb';
   ctx.fillRect(0, 0, W, H);
-  const acc = dark ? '#f5a623' : '#c87c08';
+  const acc = dark ? '#2563eb' : '#1d4ed8';
   const dim = dark ? '#4e6080' : '#9090b0';
-  const grn = dark ? '#3dd68c' : '#1d9e5e';
-  const cyn = dark ? '#39c8e0' : '#1899b8';
+  const grn = dark ? '#16a34a' : '#15803d';
+  const cyn = dark ? '#0891b2' : '#0e7490';
   const h = HILL_CARDINALS[cardinal];
 
   // ── Compass (top half) ──────────────────
   const cx = W/2, cy = 68;
-  ctx.strokeStyle = dark?'#1e2840':'#dde2ef'; ctx.lineWidth=1;
+  ctx.strokeStyle = dark?'#334155':'#dde2ef'; ctx.lineWidth=1;
   for(let a=0;a<360;a+=45){
     const r=(a-90)*Math.PI/180;
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(r)*52,cy+Math.sin(r)*52);ctx.stroke();
   }
-  ctx.strokeStyle=dark?'#2a3a58':'#c4cce0';
+  ctx.strokeStyle=dark?'#475569':'#c4cce0';
   ctx.beginPath();ctx.arc(cx,cy,52,0,Math.PI*2);ctx.stroke();
   ctx.font='bold 8px "JetBrains Mono",monospace';
   ctx.fillStyle=dim;ctx.textAlign='center';ctx.textBaseline='middle';
@@ -1809,6 +2083,5 @@ document.getElementById('tab-shape').addEventListener('click', () => {
 // ══════════════════════════════════════════════════
 switchMode('kml');
 </script>
-
 </body>
 </html>

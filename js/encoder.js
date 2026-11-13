@@ -31,17 +31,18 @@ const writeU32 = (b, v) => b.push(v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >
 const writeN = (b, v, n) => { for (let i = 0; i < n; i++) b.push((v >> (i * 8)) & 255); };
 
 /** Extra per-block payload bytes required by certain block IDs. */
+const CHECKPOINT_IDS = new Set([52, 65, 75, 77]);  // followed by a 16-bit checkpoint order
+const START_IDS = new Set([5, 91, 92, 93]);        // followed by a 32-bit start order
 function writeExtra(bin, id, block) {
-  if (id === BLOCK.CHECKPOINT) bin.push(block.cpIdx & 0xff, 0);
-  if (id === 65 || id === 77) bin.push(0, 0);
-  if (id === 91 || id === 92 || id === 93) writeU32(bin, 0);
+  if (CHECKPOINT_IDS.has(id)) bin.push(block.cpIdx & 0xff, (block.cpIdx >> 8) & 0xff);
+  if (START_IDS.has(id)) writeU32(bin, 0);
 }
 
 /**
- * Serialize lines ({id, rot, points:[{x,y,z,cpIndex?}]}) into the PolyTrack binary block list.
+ * Serialize lines ({id, rot, color?, points:[{x,y,z,cpIndex?}]}) into the PolyTrack binary block list.
  * Coordinates are shifted so all are non-negative; exact duplicate blocks are dropped.
  */
-function buildBinary(lines) {
+function buildBinary(lines, environment = 0) {
   let mnX = Infinity, mnY = Infinity, mnZ = Infinity, count = 0;
   for (const l of lines) for (const p of l.points) {
     if (p.x < mnX) mnX = p.x; if (p.y < mnY) mnY = p.y; if (p.z < mnZ) mnZ = p.z;
@@ -54,6 +55,7 @@ function buildBinary(lines) {
   let mxX = 0, mxY = 0, mxZ = 0, dupes = 0;
   for (const l of lines) {
     const id = l.id;
+    if (!isValidBlockId(id)) throw new Error(`Block ID ${id} does not exist in PolyTrack - the game would reject the whole track.`);
     if (!groups.has(id)) groups.set(id, { blocks: [], seen: new Set() });
     const g = groups.get(id);
     const rot = l.rot || 0;
@@ -62,13 +64,13 @@ function buildBinary(lines) {
       const key = `${x},${y},${z},${rot}`;
       if (g.seen.has(key)) { dupes++; continue; }
       g.seen.add(key);
-      g.blocks.push({ x, y, z, rot, cpIdx: p.cpIndex ?? l.cpIndex ?? 0 });
+      g.blocks.push({ x, y, z, rot, color: l.color || 0, cpIdx: p.cpIndex ?? l.cpIndex ?? 0 });
       if (x > mxX) mxX = x; if (y > mxY) mxY = y; if (z > mxZ) mxZ = z;
     }
   }
 
   const bin = [];
-  bin.push(0, 0); writeU32(bin, 0); writeU32(bin, 0); writeU32(bin, 0);
+  bin.push(environment, 0 /* sun direction */); writeU32(bin, 0); writeU32(bin, 0); writeU32(bin, 0);
   const xB = byteWidth(mxX), yB = byteWidth(mxY), zB = byteWidth(mxZ);
   bin.push((zB << 4) | (yB << 2) | xB);
   dbg(`Binary: max=(${mxX},${mxY},${mxZ}) bw=(${xB},${yB},${zB}) shift=(${sx},${sy},${sz})`);
@@ -80,7 +82,7 @@ function buildBinary(lines) {
     writeU32(bin, blocks.length);
     for (const b of blocks) {
       writeN(bin, b.x, xB); writeN(bin, b.y, yB); writeN(bin, b.z, zB);
-      bin.push(b.rot, 0 /* dir */, 0 /* color */);
+      bin.push(b.rot, 0 /* rotation axis */, b.color);
       writeExtra(bin, id, b);
     }
   }
@@ -95,8 +97,9 @@ function encodeLabel(str) {
   return bytes.length <= 255 ? bytes : bytes.slice(0, 255);
 }
 
-async function encodeTrack(lines, name, author) {
-  const bin = buildBinary(lines);
+/** environment: 0 = Summer, 1 = Winter, 2 = Desert (ground colour and scenery). */
+async function encodeTrack(lines, name, author, environment = 0) {
+  const bin = buildBinary(lines, environment);
   const nb = encodeLabel(name), ab = encodeLabel(author);
   const full = new Uint8Array(2 + nb.length + ab.length + bin.length);
   let o = 0;
@@ -109,11 +112,14 @@ async function encodeTrack(lines, name, author) {
 }
 
 // ── Output panel ───────────────────────────────────
-function emitCode(code) {
+function emitCode(code, lines = []) {
   state.code = code;
   $('outputCode').textContent = code;
   setStat('E', (code.length / 1024).toFixed(1) + ' KB');
-  log(`Done - ${code.length} chars`, 'ok');
+  // Without a start block the game has nowhere to put the car
+  const hasStart = lines.some(l => START_IDS.has(l.id) && l.points.length);
+  if (hasStart) log(`Done - ${code.length} chars`, 'ok');
+  else { log(`Done - ${code.length} chars, but there is no start block (e.g. ID 92), so the track cannot be driven`, 'warn'); toast('Warning: track has no start block'); }
   dbg(`Encoded: ${code.length} chars`, 'ok');
 }
 

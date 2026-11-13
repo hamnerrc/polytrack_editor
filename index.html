@@ -74,7 +74,7 @@
       <label for="useElevation">Use real elevation (Y axis)</label>
       <input type="checkbox" id="useElevation">
     </div>
-    <div class="muted-note" id="elevNote" hidden>Queries <b>open-elevation.com</b> for real terrain altitude at each path point. Requires internet. Ramp blocks (ID 145/146) are placed on slopes - each ramp = 40 m horizontal, 10 m rise.</div>
+    <div class="muted-note" id="elevNote" hidden>Queries <b>open-elevation.com</b> for real terrain altitude at each path point. Requires internet. Ramps (block IDs 145 + 146) are placed on slopes - each ramp is 80 m long and climbs 20 m, so height is rounded to 20 m steps.</div>
   </div>
 
   <div class="step">
@@ -101,8 +101,10 @@
       </select>
     </div>
 
+    <div class="muted-note" style="margin:0 0 .7rem">Coordinates are game units. A road block covers <b>4 × 4 units</b> and is 1 unit tall, so blocks are placed every 4 units sideways and every 1 unit vertically.</div>
+
     <div id="form-line" class="sf">
-      <div class="field"><label>Block ID</label><input type="number" id="lineId" value="25" min="0" max="255"></div>
+      <div class="field"><label>Block ID</label><input type="number" id="lineId" value="25" min="0" max="189"></div>
       <div class="field"><label>Start - X · Y · Z</label>
         <div class="g3"><input type="number" id="lsx" value="0"><input type="number" id="lsy" value="0"><input type="number" id="lsz" value="0"></div>
       </div>
@@ -130,7 +132,7 @@
         <div class="field"><label id="max2Label">Max Z</label><input type="number" id="rectMax2" value="100"></div>
       </div>
       <div class="g2">
-        <div class="field"><label>Block ID</label><input type="number" id="rectId" value="25" min="0" max="255"></div>
+        <div class="field"><label>Block ID</label><input type="number" id="rectId" value="25" min="0" max="189"></div>
         <div class="field"><label>Rotation</label><input type="number" id="rectRot" value="0" min="0" max="3"></div>
       </div>
     </div>
@@ -143,7 +145,7 @@
         <div class="g3"><input type="number" id="hcMaxX" value="100"><input type="number" id="hcMaxY" value="100"><input type="number" id="hcMaxZ" value="100"></div>
       </div>
       <div class="g2">
-        <div class="field"><label>Block ID</label><input type="number" id="hcId" value="25" min="0" max="255"></div>
+        <div class="field"><label>Block ID</label><input type="number" id="hcId" value="25" min="0" max="189"></div>
         <div class="field"><label>Rotation</label><input type="number" id="hcRot" value="0" min="0" max="3"></div>
       </div>
     </div>
@@ -156,7 +158,7 @@
         <div class="g3"><input type="number" id="fcMaxX" value="100"><input type="number" id="fcMaxY" value="100"><input type="number" id="fcMaxZ" value="100"></div>
       </div>
       <div class="g2">
-        <div class="field"><label>Block ID</label><input type="number" id="fcId" value="25" min="0" max="255"></div>
+        <div class="field"><label>Block ID</label><input type="number" id="fcId" value="25" min="0" max="189"></div>
         <div class="field"><label>Rotation</label><input type="number" id="fcRot" value="0" min="0" max="3"></div>
       </div>
     </div>
@@ -177,8 +179,8 @@
     <div class="step-hd"><div class="step-num">3</div><div class="step-lbl">ID test track (optional)</div></div>
     <div class="info">Generates one block of every ID in a row - useful for seeing what each block type looks like in-game. Replaces the current shape list.</div>
     <div class="g2">
-      <div class="field"><label for="minId">Min ID</label><input type="number" id="minId" value="1" min="0" max="255"></div>
-      <div class="field"><label for="maxId">Max ID</label><input type="number" id="maxId" value="50" min="0" max="255"></div>
+      <div class="field"><label for="minId">Min ID</label><input type="number" id="minId" value="1" min="0" max="189"></div>
+      <div class="field"><label for="maxId">Max ID</label><input type="number" id="maxId" value="50" min="0" max="189"></div>
     </div>
     <button type="button" class="btn btn-ghost btn-full" onclick="generateTestTrack()" style="margin-top:.45rem">Generate ID Test Track</button>
   </div>
@@ -186,8 +188,8 @@
   <div class="step">
     <div class="step-hd"><div class="step-num">4</div><div class="step-lbl">Hill inserter</div></div>
     <div class="info">
-      Places a symmetric hill using ramp blocks <b>ID 145</b> (transition) and <b>ID 146</b> (slope), automatically rotated to face the chosen direction.<br>
-      <b>Hill = ramp up + ramp down.</b>
+      Places a symmetric hill (ramp up + ramp down, <b>+4 units</b> high) from ramp blocks <b>ID 145</b> and <b>ID 146</b>, rotated to face the chosen direction.<br>
+      The <b>base position</b> is the last flat road block before the hill. The hill is 8 blocks long; flat road continues at <b>base + 36 units</b>.
     </div>
 
     <div class="hill-diagram">
@@ -236,34 +238,38 @@
 
   <div class="step">
     <div class="step-hd"><div class="step-num">1</div><div class="step-lbl">Upload an image</div></div>
-    <div class="info">The image is converted to <b>3 shades</b> (dark / mid / light). Each pixel becomes one block. High-contrast images work best.</div>
+    <div class="info">Each pixel becomes one block. Colours are matched to what PolyTrack really shows: either its <b>map preview</b> (white / yellow / blue / red on dark blue) or the <b>in-game view</b> (16 block colours). Transparent pixels are left empty.</div>
     <div class="field"><label for="imgUpload">Image file (PNG / JPEG / GIF)</label><input type="file" id="imgUpload" accept="image/*"></div>
     <div class="g2">
-      <div class="field"><label for="resValue">Resolution (longest side)</label><input type="number" id="resValue" value="64" min="8" max="256"></div>
-      <div class="field"><label for="pixelSpacing">Spacing (blocks/px)</label><input type="number" id="pixelSpacing" value="1" min="1" max="10"></div>
+      <div class="field"><label for="resValue">Resolution (longest side)</label><input type="number" id="resValue" value="64" min="4" max="256"></div>
+      <div class="field"><label for="pixelSpacing">Spacing (blocks per pixel)</label><input type="number" id="pixelSpacing" value="1" min="1" max="10"></div>
     </div>
     <label class="chk"><input type="checkbox" id="preserveAspect" checked> Preserve aspect ratio</label>
-    <label class="chk"><input type="checkbox" id="use4x" checked> 4× PolyTrack coordinate scale</label>
     <button type="button" class="btn btn-acc btn-full" onclick="processUpload()" style="margin-top:.55rem">Preview Image →</button>
   </div>
 
   <div class="step">
-    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Assign block IDs to 3 shades</div></div>
-    <div class="map-row">
-      <div class="swatch" style="background:#1a2eaa"></div>
-      <span>Dark pixels</span>
-      <input type="number" id="idBin0" value="5" min="0" max="255">
+    <div class="step-hd"><div class="step-num">2</div><div class="step-lbl">Colours</div></div>
+    <div class="field">
+      <label for="pixelTarget">Where will the picture be seen?</label>
+      <select id="pixelTarget">
+        <option value="preview">Map preview - on the track's page (5 colours)</option>
+        <option value="game">In the game - driving view (16 colours)</option>
+      </select>
     </div>
-    <div class="map-row">
-      <div class="swatch" style="background:#7a7e96"></div>
-      <span>Mid pixels</span>
-      <input type="number" id="idBin1" value="25" min="0" max="255">
+    <div class="field">
+      <label for="pixelEnv">Environment (sets the base / ground colour)</label>
+      <select id="pixelEnv">
+        <option value="auto">Auto - best match for this image</option>
+        <option value="Summer">Summer - white preview, green grass</option>
+        <option value="Winter">Winter - light blue preview, white snow</option>
+        <option value="Desert">Desert - sand</option>
+      </select>
     </div>
-    <div class="map-row">
-      <div class="swatch" style="background:#d8ddf0"></div>
-      <span>Light pixels</span>
-      <input type="number" id="idBin2" value="52" min="0" max="255">
-    </div>
+    <label class="chk"><input type="checkbox" id="pixelUseGround" checked> Use empty space as a colour (no block there)</label>
+    <label class="chk"><input type="checkbox" id="pixelDither" checked> Dithering (blend colours with block patterns)</label>
+    <div class="muted-note" id="pixelEnvInfo">Preview an image to see which block colours it uses.</div>
+    <div id="pixelLegend" style="margin-top:.4rem"></div>
   </div>
 
   <div class="step">
@@ -310,10 +316,10 @@
     <div id="pixPanel" hidden>
       <div class="px-grid">
         <div>
-          <p class="section-label">Colour preview</p>
-          <div class="info">These 3 colours represent your 3 block IDs. Adjust the ID numbers in Step 2, then hit Generate.</div>
+          <p class="section-label">How it will look in PolyTrack</p>
+          <div class="info">This preview uses the game's real colours, so it is how the picture will look in PolyTrack. Change the options in Step 2 to compare.</div>
           <div class="mini-stats">
-            <div class="mini-stat"><div class="sv" id="pixCount">0</div><div class="sl">Pixels</div></div>
+            <div class="mini-stat"><div class="sv" id="pixCount">0</div><div class="sl">Blocks</div></div>
             <div class="mini-stat"><div class="sv" id="pixW">-</div><div class="sl">Width</div></div>
             <div class="mini-stat"><div class="sv" id="pixH">-</div><div class="sl">Height</div></div>
           </div>
@@ -364,6 +370,7 @@
 <script src="js/kml.js"></script>
 <script src="js/shapes.js"></script>
 <script src="js/hill.js"></script>
+<script src="js/pixel-palette.js"></script>
 <script src="js/pixel.js"></script>
 <script src="js/main.js"></script>
 </body>

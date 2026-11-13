@@ -7,6 +7,7 @@
   initTheme();
   initKML();
   initShapes();
+  initPixel();
   switchMode('kml');
 
   let resizeTimer;

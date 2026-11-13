@@ -83,7 +83,7 @@ function setStat(key, value, label) {
 const MODES = {
   kml:   { info: 'KML → 1:1 REAL-WORLD CIRCUIT', labels: { A: 'KML Points', B: 'Road Blocks', C: 'Checkpoints', D: 'Circuit Length' } },
   shape: { info: 'MANUAL SHAPE BUILDER',         labels: { A: 'Shapes', B: 'Total Blocks', C: 'Unique IDs', D: '' } },
-  pixel: { info: 'IMAGE → PIXEL ART TRACK',      labels: { A: 'Pixels', B: 'Width (px)', C: 'Height (px)', D: '' } },
+  pixel: { info: 'IMAGE → PIXEL ART TRACK',      labels: { A: 'Pixels', B: 'Width (px)', C: 'Height (px)', D: 'Blocks' } },
 };
 
 function switchMode(mode) {

@@ -7,6 +7,8 @@
 const RDP_TOLERANCE_M = 10;
 const ELEVATION_API = 'https://api.open-elevation.com/api/v1/lookup';
 const ELEVATION_BATCH = 256;
+/** Elevation is sampled at least this often along the path (2 ramp lengths). */
+const ELEVATION_SAMPLE_M = 160;
 
 /** Parse a KML document and return the longest <coordinates> list as [{lon, lat, alt}]. */
 function parseKML(txt) {
@@ -45,7 +47,7 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
 
   const snapped = local.map(p => ({
     bx: (Math.round(p.x / 20) + ox) * CS,
-    bz: (Math.round(p.z / 20) + oz) * CS,
+    bz: (oz - Math.round(p.z / 20)) * CS,   // north = -Z, so the track is not mirrored in the game
     by: useElevation ? altToY(p.alt) : oy * CS,
   }));
 
@@ -61,7 +63,6 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
   const flatSeen = new Set(), flatRoad = [];
   const rampSeen = new Set(), rampBlocks = [];
   const halfW = Math.floor(rw / 2);
-  const hW = halfW * CS, fW = (rw - 1 - halfW) * CS;
 
   function pushFlat(p) {
     const k = `${p.x},${p.y},${p.z}`;
@@ -69,14 +70,29 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
   }
   /** Road slab centred on (x,y,z); widenX = spread across X (travel along Z). */
   function addFlatSlab(x, y, z, widenX) {
-    if (rw <= 1) { pushFlat({ x, y, z }); return; }
-    const nx = widenX ? 1 : 0, nz = widenX ? 0 : 1;
-    for (const sp of line3D(x - nx * hW, y, z - nz * hW, x + nx * fW, y, z + nz * fW)) pushFlat(sp);
+    for (let w = 0; w < rw; w++) {
+      const off = (w - halfW) * CS;
+      pushFlat({ x: x + (widenX ? off : 0), y, z: z + (widenX ? 0 : off) });
+    }
+  }
+  // Ordered centre-line cells of the road (null = ramp), used to find straight spots for gates
+  const centrePath = [];
+  function addCentre(x, y, z, widenX) {
+    const prev = centrePath[centrePath.length - 1];
+    if (!prev || prev.x !== x || prev.y !== y || prev.z !== z) centrePath.push({ x, y, z });
+    addFlatSlab(x, y, z, widenX);
   }
   /** Flat road along a (possibly diagonal) line at height y. */
   function addFlatLine(x1, z1, x2, z2, y) {
     const widenX = Math.abs(x2 - x1) < Math.abs(z2 - z1);
-    for (const cb of line3D(x1, y, z1, x2, y, z2)) addFlatSlab(cb.x, cb.y, cb.z, widenX);
+    const cells = gridLine(x1, z1, x2, z2);
+    cells.forEach((c, i) => {
+      addCentre(c.x, y, c.z, widenX);
+      // Diagonals are staircases: where the stair turns, also fill the opposite corner of that
+      // 2×2 square, so the straight driving line has road on both sides instead of a bare edge
+      const p = cells[i - 1], n = cells[i + 1];
+      if (p && n && p.x !== n.x && p.z !== n.z) addFlatSlab(p.x + n.x - c.x, y, p.z + n.z - c.z, widenX);
+    });
   }
   function addRamp(id, rot, x, y, z, cardinal) {
     const travelZ = cardinal === 0 || cardinal === 2;
@@ -98,13 +114,14 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
     const cardinal = snapCardinal(ddx, ddz);
     const dir = CARDINALS[cardinal];
 
-    let nRamps = 0, ascending = false, flatHoriz = 0;
+    const travelZ = cardinal === 0 || cardinal === 2;
+    let nRamps = 0, ascending = false;
     if (useElevation) {
-      const hSpan = Math.abs(cardinal === 0 || cardinal === 2 ? ddz : ddx);
+      const hSpan = Math.abs(travelZ ? ddz : ddx);
       const dY = b.by - surfaceY;                      // multiple of 4
       ascending = dY > 0;
-      nRamps = Math.min(Math.abs(dY) / 4, Math.floor(hSpan / 16));
-      flatHoriz = hSpan - nRamps * 16;
+      // A ramp is 16 units long; keep one block (CS) free so the cell at b stays a flat block
+      nRamps = Math.max(0, Math.min(Math.abs(dY) / 4, Math.floor((hSpan - CS) / 16)));
     }
 
     if (nRamps === 0) {
@@ -113,71 +130,86 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
       continue;
     }
 
-    let cx = a.bx, cz = a.bz;
-    const step = n => { cx += dir.dx * n; cz += dir.dz * n; };
-
+    // Ramp parts are anchored 4 units into their 8-unit footprint (checked against the game's part table)
+    const rampLen = nRamps * 16;
     if (ascending) {
-      // Ramps first, then flat
+      // a: flat block, then ramps straight along the travel axis, then flat road (incl. any sideways drift) to b
+      addCentre(a.bx, surfaceY, a.bz, travelZ);
+      centrePath.push(null);
+      let cx = a.bx, cz = a.bz;
       for (let r = 0; r < nRamps; r++) {
-        addRamp(BLOCK.RAMP_TRANSITION, dir.asc145, cx + dir.dx * 4, surfaceY,     cz + dir.dz * 4, cardinal);
-        step(8);
-        addRamp(BLOCK.RAMP_SLOPE,      dir.asc146, cx + dir.dx * 4, surfaceY + 2, cz + dir.dz * 4, cardinal);
-        step(8);
+        addRamp(BLOCK.RAMP_TRANSITION, dir.asc145, cx + dir.dx * 4,  surfaceY,     cz + dir.dz * 4,  cardinal);
+        addRamp(BLOCK.RAMP_SLOPE,      dir.asc146, cx + dir.dx * 12, surfaceY + 2, cz + dir.dz * 12, cardinal);
+        cx += dir.dx * 16; cz += dir.dz * 16;
         surfaceY += 4;
       }
-      // The slope block's footprint covers its own exit edge - skip past it before placing flat road
-      step(CS);
-      for (let done = CS; done + CS <= flatHoriz + 0.5; done += CS) {
-        addFlatSlab(cx, surfaceY, cz, cardinal === 0 || cardinal === 2);
-        step(CS);
-      }
+      addFlatLine(cx + dir.dx * CS, cz + dir.dz * CS, b.bx, b.bz, surfaceY);
     } else {
-      // Descending: flat first, then ramps (slope block first, exit transition second)
-      for (let done = 0; done + CS <= flatHoriz + 0.5; done += CS) {
-        addFlatSlab(cx, surfaceY, cz, cardinal === 0 || cardinal === 2);
-        step(CS);
-      }
+      // flat road (incl. any sideways drift) from a to the top of the ramps, then ramps straight down into b
+      const topX = b.bx - dir.dx * rampLen, topZ = b.bz - dir.dz * rampLen;
+      addFlatLine(a.bx, a.bz, topX - dir.dx * CS, topZ - dir.dz * CS, surfaceY);
+      centrePath.push(null);
+      let cx = topX, cz = topZ;
       for (let r = 0; r < nRamps; r++) {
-        addRamp(BLOCK.RAMP_SLOPE,      dir.dsc146, cx + dir.dx * 4, surfaceY - 2, cz + dir.dz * 4, cardinal);
-        step(8);
-        addRamp(BLOCK.RAMP_TRANSITION, dir.dsc145, cx + dir.dx * 4, surfaceY - 4, cz + dir.dz * 4, cardinal);
-        step(8);
+        addRamp(BLOCK.RAMP_SLOPE,      dir.dsc146, cx + dir.dx * 4,  surfaceY - 2, cz + dir.dz * 4,  cardinal);
+        addRamp(BLOCK.RAMP_TRANSITION, dir.dsc145, cx + dir.dx * 12, surfaceY - 4, cz + dir.dz * 12, cardinal);
+        cx += dir.dx * 16; cz += dir.dz * 16;
         surfaceY -= 4;
       }
+      // the block at b itself is laid by the next segment (or becomes the finish)
     }
-
-    // Diagonal segments: stitch the perpendicular gap from the walk endpoint to b
-    if (cx !== b.bx || cz !== b.bz) addFlatLine(cx, cz, b.bx, b.bz, surfaceY);
   }
 
   // ── Checkpoints at corners ───────────────────────
   // Detected from the full-resolution local path so tight corners that snap to the same cell
   // aren't missed. Each checkpoint is placed on an actual flat road block (the one at the corner,
   // or the nearest one) so it never floats above / sinks into a ramp.
-  const flatByXZ = new Map();
-  for (const f of flatRoad) {
-    const k = `${f.x},${f.z}`;
-    if (!flatByXZ.has(k)) flatByXZ.set(k, f);
-  }
-  const nearestFlat = (x, z) => {
-    let best = null, bestD = Infinity;
-    for (const f of flatRoad) {
-      const d = (f.x - x) ** 2 + (f.z - z) ** 2;
-      if (d < bestD) { bestD = d; best = f; }
-    }
-    return best;
+  // A gate (checkpoint / finish) has posts, so it must sit where the car drives straight through it:
+  // a centre-line cell whose neighbours on both sides continue in the same direction at the same height.
+  const stepDir = (p, q) => (p && q && p.y === q.y && Math.abs(q.x - p.x) + Math.abs(q.z - p.z) === CS)
+    ? snapCardinal(q.x - p.x, q.z - p.z) : -1;
+  const straightAt = j => {
+    const d = stepDir(centrePath[j - 1], centrePath[j]);
+    return d >= 0 && d === stepDir(centrePath[j], centrePath[j + 1]) ? d : -1;
   };
+  const GATE_SEARCH = 8;   // cells to look before / after a corner for a straight spot
 
   const cps = [], cpSeen = new Set();
+  let pathIdx = 1;          // checkpoints are placed in driving order; never on the start cell
   for (let i = 1; i < local.length - 1; i++) {
     const prev = local[i - 1], cur = local[i], next = local[i + 1];
     if (angleBetween(cur.x - prev.x, cur.z - prev.z, next.x - cur.x, next.z - cur.z) < turnAngle) continue;
     const sx = (Math.round(cur.x / 20) + ox) * CS;
-    const sz = (Math.round(cur.z / 20) + oz) * CS;
-    const road = flatByXZ.get(`${sx},${sz}`) || nearestFlat(sx, sz);
-    if (!road) continue;
-    const key = `${road.x},${road.z}`;
-    if (!cpSeen.has(key)) { cpSeen.add(key); cps.push({ bx: road.x, by: road.y, bz: road.z }); }
+    const sz = (oz - Math.round(cur.z / 20)) * CS;
+    // locate the corner on the centre line, at or after the previous checkpoint
+    let corner = -1, best = Infinity;
+    for (let j = pathIdx; j < centrePath.length - 1; j++) {
+      const c = centrePath[j];
+      if (!c) continue;
+      const d = (c.x - sx) ** 2 + (c.z - sz) ** 2;
+      if (d < best) { best = d; corner = j; }
+      if (d === 0) break;
+    }
+    if (corner < 0) continue;
+    // prefer a straight cell just before the corner, then just after it, then the corner itself
+    let at = -1, cardinal = -1;
+    for (let k = 1; k <= GATE_SEARCH && at < 0; k++) {
+      const j = corner - k;
+      if (j >= pathIdx && (cardinal = straightAt(j)) >= 0) at = j;
+    }
+    // (after a corner, leave a cell of room so cars have straightened up before the gate)
+    for (let k = 2; k <= GATE_SEARCH && at < 0; k++) {
+      const j = corner + k;
+      if (j < centrePath.length - 1 && (cardinal = straightAt(j)) >= 0) at = j;
+    }
+    if (at < 0) {
+      at = corner;
+      cardinal = Math.max(0, stepDir(centrePath[corner - 1], centrePath[corner]));
+    }
+    const c = centrePath[at];
+    const key = `${c.x},${c.z}`;
+    if (!cpSeen.has(key)) { cpSeen.add(key); cps.push({ bx: c.x, by: c.y, bz: c.z, cardinal }); }
+    pathIdx = Math.max(pathIdx, at + 1);
   }
 
   // ── Normalize so the lowest block sits at y = 0 ──
@@ -187,8 +219,9 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
   for (const c of cps) minY = Math.min(minY, c.by);
   for (const p of pts) minY = Math.min(minY, p.by);
   minY = Math.min(minY, surfaceY);
+  let yShift = 0;
   if (minY < 0) {
-    const shift = -minY;
+    const shift = yShift = -minY;
     for (const b of flatRoad) b.y += shift;
     for (const b of rampBlocks) b.y += shift;
     for (const c of cps) c.by += shift;
@@ -197,17 +230,63 @@ function kmlPathToLines(local, { ox, oy, oz, roadWidth: rw, turnAngle, useElevat
   }
 
   // ── Assemble output ──────────────────────────────
-  const lines = [];
-  if (flatRoad.length) lines.push({ id: BLOCK.ROAD, rot: 0, points: flatRoad });
-  for (const rb of rampBlocks) lines.push({ id: rb.id, rot: rb.rot, points: [{ x: rb.x, y: rb.y, z: rb.z }] });
-  cps.forEach((cp, idx) => lines.push({
-    id: BLOCK.CHECKPOINT, rot: 0, cpIndex: idx, points: [{ x: cp.bx, y: cp.by, z: cp.bz, cpIndex: idx }],
-  }));
-  lines.push({ id: BLOCK.START, rot: 0, points: [{ x: pts[0].bx, y: pts[0].by, z: pts[0].bz }] });
-  const last = pts[pts.length - 1];
-  lines.push({ id: BLOCK.FINISH, rot: 0, points: [{ x: last.bx, y: surfaceY, z: last.bz }] });
+  // Start, finish and checkpoints REPLACE the road block at their position (parts must not overlap).
+  // Finish and checkpoint parts are gates with posts, so they are rotated to face the direction of
+  // travel, and on wide roads one gate is placed per lane so they cannot be driven around.
+  const key3 = (x, y, z) => `${x},${y},${z}`;
+  const isRoad = (x, y, z) => flatSeen.has(key3(x, y - yShift, z));
+  const taken = new Set();
+  /** Cells across the road at (x,y,z) for travel direction `cardinal`; null if any lane is missing. */
+  const across = (x, y, z, cardinal) => {
+    const travelZ = cardinal === 0 || cardinal === 2, cells = [];
+    for (let w = 0; w < rw; w++) {
+      const off = (w - halfW) * CS;
+      const c = { x: x + (travelZ ? off : 0), y, z: z + (travelZ ? 0 : off) };
+      if (off !== 0 && !isRoad(c.x, c.y, c.z)) return null;
+      cells.push(c);
+    }
+    return cells;
+  };
+  const claim = cells => cells.filter(c => {
+    const k = key3(c.x, c.y, c.z);
+    if (taken.has(k)) return false;
+    taken.add(k); return true;
+  });
 
-  return { lines, blockPts: pts, cps, roadBlocks: flatRoad.length + rampBlocks.length, useElevation };
+  const first = pts[0], last = pts[pts.length - 1];
+  const segCardinal = i => snapCardinal(pts[i + 1].bx - pts[i].bx, pts[i + 1].bz - pts[i].bz);
+  // Face the start along the first road step and the finish gate along the last one
+  const pathCells = centrePath.filter(Boolean);
+  const firstStep = stepDir(pathCells[0], pathCells[1]), lastStep = stepDir(pathCells[pathCells.length - 2], pathCells[pathCells.length - 1]);
+  const startRot = firstStep >= 0 ? firstStep : pts.length > 1 ? segCardinal(0) : 0;
+  const finishRot = lastStep >= 0 ? lastStep : pts.length > 1 ? segCardinal(pts.length - 2) : 0;
+  const startCells = claim([{ x: first.bx, y: first.by, z: first.bz }]);
+  // Closed loops end where they began: put the finish on the last road block before the start
+  let fin = { x: last.bx, y: surfaceY, z: last.bz };
+  if (taken.has(key3(fin.x, fin.y, fin.z))) {
+    for (let i = flatRoad.length - 1; i >= 0; i--) {
+      if (!taken.has(key3(flatRoad[i].x, flatRoad[i].y, flatRoad[i].z))) { fin = flatRoad[i]; break; }
+    }
+  }
+  const finishCells = claim(across(fin.x, fin.y, fin.z, finishRot) || [fin]);
+  const cpLines = [];
+  for (const cp of cps) {
+    const cells = claim(across(cp.bx, cp.by, cp.bz, cp.cardinal) || [{ x: cp.bx, y: cp.by, z: cp.bz }]);
+    if (!cells.length) continue;   // corner coincides with start / finish
+    const idx = cpLines.length;
+    cpLines.push({ id: BLOCK.CHECKPOINT, rot: cp.cardinal, cpIndex: idx, points: cells.map(c => ({ ...c, cpIndex: idx })) });
+  }
+  const road = flatRoad.filter(b => !taken.has(key3(b.x, b.y, b.z)));
+
+  const lines = [];
+  if (road.length) lines.push({ id: BLOCK.ROAD, rot: 0, points: road });
+  for (const rb of rampBlocks) lines.push({ id: rb.id, rot: rb.rot, points: [{ x: rb.x, y: rb.y, z: rb.z }] });
+  lines.push(...cpLines);
+  lines.push({ id: BLOCK.START, rot: startRot, points: startCells });
+  lines.push({ id: BLOCK.FINISH, rot: finishRot, points: finishCells });
+  const placedCps = cpLines.map(l => ({ bx: l.points[0].x, by: l.points[0].y, bz: l.points[0].z }));
+
+  return { lines, blockPts: pts, cps: placedCps, roadBlocks: flatRoad.length + rampBlocks.length, useElevation };
 }
 
 // ── Preview canvas ─────────────────────────────────
@@ -235,9 +314,9 @@ function drawKMLCanvas(blockPts, cps = [], useElev = false) {
   const [mnZ, mxZ] = minMax(blockPts.map(p => p.bz));
   const pad = 42, rX = mxX - mnX || 1, rZ = mxZ - mnZ || 1;
   const sc = Math.min((W - pad * 2) / rX, (H - pad * 2) / rZ);
-  // Centre the drawing in the canvas; north (+Z) points up
+  // Centre the drawing in the canvas; north (-Z) points up, as in the game's own track thumbnails
   const offX = (W - rX * sc) / 2, offY = (H - rZ * sc) / 2;
-  const toC = (bx, bz) => ({ cx: offX + (bx - mnX) * sc, cy: offY + (mxZ - bz) * sc });
+  const toC = (bx, bz) => ({ cx: offX + (bx - mnX) * sc, cy: offY + (bz - mnZ) * sc });
 
   // Dot grid
   ctx.fillStyle = dark ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.06)';
@@ -317,6 +396,18 @@ function refreshKMLStats() {
 }
 
 // ── Elevation lookup ───────────────────────────────
+/** Insert interpolated points so consecutive coordinates are at most maxM metres apart. */
+function densify(coords, maxM) {
+  const out = [coords[0]];
+  for (let i = 1; i < coords.length; i++) {
+    const a = coords[i - 1], b = coords[i];
+    const n = Math.ceil(haversineM(a.lon, a.lat, b.lon, b.lat) / maxM);
+    for (let k = 1; k < n; k++) out.push({ lon: a.lon + (b.lon - a.lon) * k / n, lat: a.lat + (b.lat - a.lat) * k / n, alt: 0 });
+    out.push(b);
+  }
+  return out;
+}
+
 /** Replace .alt on each {lat, lon} with real terrain altitude (metres) from open-elevation.com. */
 async function fetchElevation(coords, onProgress) {
   const out = [...coords];
@@ -370,6 +461,9 @@ async function generateKML() {
     const useElevation = $('useElevation').checked;
     let dLabel = 'Circuit Length', dValue = (dist / 1000).toFixed(2) + ' km';
     if (useElevation) {
+      // RDP only looks at the map outline, so re-insert points along long straights -
+      // otherwise hills and dips between two corners would be lost
+      smoothed = densify(smoothed, ELEVATION_SAMPLE_M);
       btn.textContent = `⏳ Fetching elevation (0/${smoothed.length})…`;
       log(`Fetching elevation for ${smoothed.length} pts…`, 'warn');
       smoothed = await fetchElevation(smoothed, (done, total) => {
@@ -397,7 +491,7 @@ async function generateKML() {
 
     log('Compressing…', 'warn');
     const code = await encodeTrack(result.lines, text('kmlTrackName', 'My Circuit'), text('kmlAuthor', 'Builder'));
-    emitCode(code);
+    emitCode(code, result.lines);
     toast('Circuit generated!');
   } catch (e) {
     reportError(e);

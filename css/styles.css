@@ -543,6 +543,9 @@ select option { background: var(--surface); color: var(--text); }
 .mini-stat { padding: .45rem .75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
 .mini-stat .sv { font-size: .9rem; }
 
+/* Pixel legend */
+.legend-count { flex: 0 0 auto !important; color: var(--muted) !important; font-variant-numeric: tabular-nums; }
+
 /* Misc */
 .upload-icon { margin-bottom: .2rem; font-size: 1.15rem; }
 .ph.clickable { cursor: pointer; user-select: none; }

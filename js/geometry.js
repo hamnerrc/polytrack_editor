@@ -43,6 +43,24 @@ function line3D(x1, y1, z1, x2, y2, z2) {
   }
 }
 
+/**
+ * Cells from (x1,z1) to (x2,z2) on a grid of `step` units, each sharing an EDGE with the next
+ * (never just a corner) so 4×4 road blocks placed on them form a continuous, driveable surface.
+ * The end point is snapped onto the grid that starts at (x1,z1).
+ */
+function gridLine(x1, z1, x2, z2, step = CS) {
+  const nx = Math.round((x2 - x1) / step), nz = Math.round((z2 - z1) / step);
+  const ax = Math.abs(nx), az = Math.abs(nz), sx = Math.sign(nx), sz = Math.sign(nz);
+  const cells = [{ x: x1, z: z1 }];
+  let ix = 0, iz = 0;
+  while (ix < ax || iz < az) {
+    // advance along whichever axis keeps the path closest to the ideal straight line
+    if ((ix + 0.5) / ax < (iz + 0.5) / az) ix++; else iz++;
+    cells.push({ x: x1 + sx * ix * step, z: z1 + sz * iz * step });
+  }
+  return cells;
+}
+
 /** Great-circle distance in metres. */
 function haversineM(lon1, lat1, lon2, lat2) {
   const R = 6371000, rad = Math.PI / 180;

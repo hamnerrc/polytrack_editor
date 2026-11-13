@@ -6,22 +6,32 @@
 /** PolyTrack coordinate units per block (1 block = 20 m, so 1 unit = 5 m). */
 const CS = 4;
 
-/** Block IDs with special meaning. */
+/**
+ * Block (part) IDs used by the generators. Names are the game's own (PolyTrack 0.6.3).
+ * Footprints, from the game's part table: flat "Plane" parts cover 4×4 units (1 unit tall), so
+ * neighbouring blocks must be CS = 4 units apart. The two "long slope" parts cover 4×8 units and
+ * each rise 2 units; a 145 + 146 pair forms one smooth ramp rising 4 units over 16.
+ */
 const BLOCK = {
-  ROAD: 25,
-  CHECKPOINT: 75,
-  FINISH: 76,
-  START: 92,
-  RAMP_TRANSITION: 145,
-  RAMP_SLOPE: 146,
+  ROAD: 25,              // Plane
+  CHECKPOINT: 75,        // PlaneCheckpoint
+  FINISH: 76,            // PlaneFinish
+  START: 92,             // PlaneStart - rotation r faces CARDINALS[r]
+  RAMP_TRANSITION: 145,  // PlaneSlopeUpLong   (lower half of a ramp: flat → incline)
+  RAMP_SLOPE: 146,       // PlaneSlopeDownLong (upper half of a ramp: incline → flat), placed 2 units higher
 };
 
 const ID_NAMES = {
-  5: 'Start (legacy)', 6: 'Finish (legacy)',
-  25: 'Road', 52: 'Checkpoint',
-  75: 'Checkpoint (numbered)', 76: 'Finish', 92: 'Start',
-  145: 'Ramp transition', 146: 'Ramp slope',
+  5: 'Start (track piece)', 6: 'Finish (track piece)',
+  25: 'Plane road', 52: 'Checkpoint (track piece)',
+  75: 'Plane checkpoint', 76: 'Plane finish', 92: 'Plane start',
+  145: 'Plane slope, lower half', 146: 'Plane slope, upper half',
 };
+
+/** Highest part ID the game knows, and the gaps below it (verified against the game's importer). */
+const MAX_BLOCK_ID = 189;
+const INVALID_BLOCK_IDS = new Set([60, 89]);
+const isValidBlockId = id => Number.isInteger(id) && id >= 0 && id <= MAX_BLOCK_ID && !INVALID_BLOCK_IDS.has(id);
 
 /**
  * Travel directions, indexed by "cardinal": 0 = -Z, 1 = -X, 2 = +Z, 3 = +X.
@@ -43,7 +53,8 @@ const LARGE_SHAPE_BLOCKS = 250000;
 const state = {
   mode: 'kml',
   shapes: [],     // shape builder entries: { label, lines: [{id, rot, points}] }
-  pixels: null,   // processed pixel image: { w, h, pixels: number[][] }
+  pixelSource: null, // downsampled upload: { w, h, data: RGBA }
+  pixels: null,      // colour-matched image: { w, h, cells, env, palette, used }
   code: '',       // last generated track code
   lastKML: null,  // last KML build result + stats
 };

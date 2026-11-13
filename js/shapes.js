@@ -3,89 +3,90 @@
 // SHAPE BUILDER
 // ══════════════════════════════════════════════════
 
-const blockId = id => int(id, 25, 0, 255);
 const blockRot = id => int(id, 0, 0, 3);
 const sorted2 = (a, b) => a <= b ? [a, b] : [b, a];
 
-/** Read a "min corner / max corner" pair of X·Y·Z inputs, normalized so min <= max. */
-function readBox(prefix) {
-  const [mnX, mxX] = sorted2(int(prefix + 'MinX'), int(prefix + 'MaxX'));
-  const [mnY, mxY] = sorted2(int(prefix + 'MinY'), int(prefix + 'MaxY'));
-  const [mnZ, mxZ] = sorted2(int(prefix + 'MinZ'), int(prefix + 'MaxZ'));
-  return { mnX, mxX, mnY, mxY, mnZ, mxZ };
+/** Read a block ID input; throws a readable error for IDs the game does not have. */
+function blockId(inputId) {
+  const id = int(inputId, BLOCK.ROAD);
+  if (!isValidBlockId(id)) throw new Error(`Block ID ${id} does not exist in PolyTrack (valid: 0-${MAX_BLOCK_ID}, except ${[...INVALID_BLOCK_IDS].join(', ')}).`);
+  return id;
 }
 
-/** Build the line list for the currently selected shape form. Returns { label, lines, estimate }. */
+// Blocks cover CS × CS units horizontally and are 1 unit tall, so shapes step by CS along X / Z
+// and by 1 along Y. Ranges start at `min` and never go past `max`.
+const stepsXZ = (min, max) => Array.from({ length: Math.floor((max - min) / CS) + 1 }, (_, i) => min + i * CS);
+const stepsY = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => min + i);
+
+/** Read a "min corner / max corner" pair of X·Y·Z inputs as lists of block positions per axis. */
+function readBox(prefix) {
+  return {
+    xs: stepsXZ(...sorted2(int(prefix + 'MinX'), int(prefix + 'MaxX'))),
+    ys: stepsY(...sorted2(int(prefix + 'MinY'), int(prefix + 'MaxY'))),
+    zs: stepsXZ(...sorted2(int(prefix + 'MinZ'), int(prefix + 'MaxZ'))),
+  };
+}
+
+/** Blocks from a to b: an edge-connected path in XZ with height interpolated, or a vertical column. */
+function shapeLine(a, b) {
+  if (Math.abs(b[0] - a[0]) < CS / 2 && Math.abs(b[2] - a[2]) < CS / 2) {
+    return stepsY(...sorted2(a[1], b[1])).map(y => ({ x: a[0], y, z: a[2] }));
+  }
+  const cells = gridLine(a[0], a[2], b[0], b[2]);
+  return cells.map((c, i) => ({ x: c.x, y: Math.round(a[1] + (b[1] - a[1]) * i / (cells.length - 1)), z: c.z }));
+}
+
+/** Describe the currently selected shape form: { label, estimate, build() → lines }. */
 function buildShapeFromForm() {
   const type = $('shapeType').value;
-  const lines = [];
 
   if (type === 'line') {
     const id = blockId('lineId'), rot = blockRot('lineRot');
     const a = [int('lsx'), int('lsy'), int('lsz')], b = [int('lex'), int('ley'), int('lez')];
-    const estimate = Math.max(...a.map((v, i) => Math.abs(b[i] - v))) + 1;
-    return { label: 'Line', estimate, build: () => [{ id, rot, points: line3D(...a, ...b) }] };
+    const estimate = (Math.abs(b[0] - a[0]) + Math.abs(b[2] - a[2])) / CS + Math.abs(b[1] - a[1]) + 1;
+    return { label: 'Line', estimate, build: () => [{ id, rot, points: shapeLine(a, b) }] };
   }
 
   if (type === 'filledRect') {
     const plane = $('rectPlane').value, fixed = int('fixedCoord');
-    const [mn1, mx1] = sorted2(int('rectMin1'), int('rectMax1'));
-    const [mn2, mx2] = sorted2(int('rectMin2'), int('rectMax2'));
+    const r1 = sorted2(int('rectMin1'), int('rectMax1')), r2 = sorted2(int('rectMin2'), int('rectMax2'));
     const id = blockId('rectId'), rot = blockRot('rectRot');
-    const estimate = (mx1 - mn1 + 1) * (mx2 - mn2 + 1);
+    // axis 1 / axis 2 per plane: xz → X,Z · xy → X,Y · yz → Y,Z
+    const s1 = plane === 'yz' ? stepsY(...r1) : stepsXZ(...r1);
+    const s2 = plane === 'xy' ? stepsY(...r2) : stepsXZ(...r2);
     return {
-      label: `Filled rectangle (${plane.toUpperCase()})`, estimate,
+      label: `Filled rectangle (${plane.toUpperCase()})`, estimate: s1.length * s2.length,
       build: () => {
-        for (let v = mn2; v <= mx2; v++) {
-          if (plane === 'xz') lines.push({ id, rot, points: line3D(mn1, fixed, v, mx1, fixed, v) });
-          else if (plane === 'xy') lines.push({ id, rot, points: line3D(mn1, v, fixed, mx1, v, fixed) });
-          else lines.push({ id, rot, points: line3D(fixed, mn1, v, fixed, mx1, v) });
+        const points = [];
+        for (const u of s1) for (const v of s2) {
+          points.push(plane === 'xz' ? { x: u, y: fixed, z: v } : plane === 'xy' ? { x: u, y: v, z: fixed } : { x: fixed, y: u, z: v });
         }
-        return lines;
+        return [{ id, rot, points }];
       },
     };
   }
 
-  if (type === 'hollowCube') {
-    const { mnX, mxX, mnY, mxY, mnZ, mxZ } = readBox('hc');
-    const id = blockId('hcId'), rot = blockRot('hcRot');
-    const X = mxX - mnX + 1, Y = mxY - mnY + 1, Z = mxZ - mnZ + 1;
-    return {
-      label: 'Hollow cube', estimate: 2 * (X * Z + X * Y + Y * Z),
-      build: () => {
-        for (let z = mnZ; z <= mxZ; z++) {           // floor + ceiling
-          lines.push({ id, rot, points: line3D(mnX, mnY, z, mxX, mnY, z) });
-          if (mxY !== mnY) lines.push({ id, rot, points: line3D(mnX, mxY, z, mxX, mxY, z) });
-        }
-        for (let y = mnY; y <= mxY; y++) {           // front + back walls
-          lines.push({ id, rot, points: line3D(mnX, y, mnZ, mxX, y, mnZ) });
-          if (mxZ !== mnZ) lines.push({ id, rot, points: line3D(mnX, y, mxZ, mxX, y, mxZ) });
-        }
-        for (let z = mnZ; z <= mxZ; z++) {           // left + right walls
-          lines.push({ id, rot, points: line3D(mnX, mnY, z, mnX, mxY, z) });
-          if (mxX !== mnX) lines.push({ id, rot, points: line3D(mxX, mnY, z, mxX, mxY, z) });
-        }
-        return lines;
-      },
-    };
-  }
-
-  // filledCube
-  const { mnX, mxX, mnY, mxY, mnZ, mxZ } = readBox('fc');
-  const id = blockId('fcId'), rot = blockRot('fcRot');
+  const hollow = type === 'hollowCube';
+  const { xs, ys, zs } = readBox(hollow ? 'hc' : 'fc');
+  const id = blockId(hollow ? 'hcId' : 'fcId'), rot = blockRot(hollow ? 'hcRot' : 'fcRot');
+  const X = xs.length, Y = ys.length, Z = zs.length;
+  const inner = Math.max(0, X - 2) * Math.max(0, Y - 2) * Math.max(0, Z - 2);
   return {
-    label: 'Filled cube', estimate: (mxX - mnX + 1) * (mxY - mnY + 1) * (mxZ - mnZ + 1),
+    label: hollow ? 'Hollow cube' : 'Filled cube', estimate: X * Y * Z - (hollow ? inner : 0),
     build: () => {
-      for (let y = mnY; y <= mxY; y++) for (let z = mnZ; z <= mxZ; z++) {
-        lines.push({ id, rot, points: line3D(mnX, y, z, mxX, y, z) });
-      }
-      return lines;
+      const points = [];
+      xs.forEach((x, i) => ys.forEach((y, j) => zs.forEach((z, k) => {
+        const onShell = i === 0 || i === X - 1 || j === 0 || j === Y - 1 || k === 0 || k === Z - 1;
+        if (!hollow || onShell) points.push({ x, y, z });
+      })));
+      return [{ id, rot, points }];
     },
   };
 }
 
 function addShape() {
-  const shape = buildShapeFromForm();
+  let shape;
+  try { shape = buildShapeFromForm(); } catch (e) { reportError(e); return; }
   if (shape.estimate > LARGE_SHAPE_BLOCKS &&
       !confirm(`This shape is about ${shape.estimate.toLocaleString()} blocks and may be slow or too large to import. Add it anyway?`)) {
     return;
@@ -155,7 +156,7 @@ async function generateShape() {
   log('Compressing…', 'warn');
   dbg('=== Shape Generate ===');
   try {
-    emitCode(await encodeTrack(lines, text('shapeTrackName', 'My Track'), text('shapeAuthor', 'Builder')));
+    emitCode(await encodeTrack(lines, text('shapeTrackName', 'My Track'), text('shapeAuthor', 'Builder')), lines);
     refreshShapeUI();
     toast('Track generated!');
   } catch (e) {
@@ -164,10 +165,11 @@ async function generateShape() {
 }
 
 function generateTestTrack() {
-  const [mn, mx] = sorted2(int('minId', 1, 0, 255), int('maxId', 50, 0, 255));
+  const [mn, mx] = sorted2(int('minId', 1, 0, MAX_BLOCK_ID), int('maxId', 50, 0, MAX_BLOCK_ID));
   const lines = [{ id: BLOCK.START, rot: 0, points: [{ x: 0, y: 0, z: 0 }] }];
   let pos = 0;
   for (let id = mn; id <= mx; id++) {
+    if (!isValidBlockId(id)) continue;
     pos += 20;
     lines.push({ id, rot: 0, points: [{ x: pos, y: 0, z: 0 }] });
   }

@@ -1,0 +1,8 @@
+{
+  "name": "polytrack-editor-game-tests",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end tests: generate tracks with the editor, import and drive them in the real PolyTrack game (headless Chrome).",
+  "scripts": { "test": "node run.mjs" },
+  "devDependencies": { "puppeteer-core": "^24.0.0" }
+}

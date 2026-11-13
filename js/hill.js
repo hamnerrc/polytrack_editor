@@ -3,14 +3,15 @@
 // HILL INSERTER - verified from a 4-direction test track
 // ══════════════════════════════════════════════════
 //
-// Confirmed block layout (travel -Z, starting from flat at z=0):
-//   z= -8  y=0  ID145 rot=0   ← entry transition (flat → slope)
-//   z=-16  y=2  ID146 rot=2   ← ascending slope, stored at y+2
-//   [peak, y=4]
-//   z=-24  y=2  ID146 rot=0   ← descending slope (mirror)
-//   z=-32  y=0  ID145 rot=2   ← exit transition (slope → flat)
-//
+// Layout along the travel direction, measured from the base block (the last flat road block
+// before the hill). Checked against the real game's part footprints and by driving it:
+//   base +4   y+0  ID145  ← lower half of the up-ramp   (covers +2 … +9)
+//   base +12  y+2  ID146  ← upper half of the up-ramp   (covers +10 … +17), peak at y+4
+//   base +24  y+2  ID146  ← upper half of the down-ramp (covers +18 … +25)
+//   base +32  y+0  ID145  ← lower half of the down-ramp (covers +26 … +33)
+//   base +36       flat road continues here
 // Rotations per direction live in CARDINALS (state.js).
+const HILL_LENGTH = 36;
 
 /** Compass angle (0° = +Z, 90° = +X, 180° = -Z, 270° = -X) → cardinal index. */
 function angleToCardinal(deg) {
@@ -92,9 +93,9 @@ function drawHillDiagram(deg, cardinal) {
   ctx.shadowBlur = 0;
 
   // ── Cross-section profile (bottom) ─────────
-  // Horizontal units: transition 4, slope 8, slope 8, transition 4 = 24
-  const bY = H - 16, bX = 10, bW = W - 20, sc = bW / 24, ys = 28 / 4;
-  const profile = [[0, 0], [4, 0], [12, 4], [20, 0], [24, 0]];
+  // Horizontal units: base block 2, four 8-unit ramp parts, 2 of the next road block = 36
+  const bY = H - 16, bX = 10, bW = W - 20, sc = bW / 36, ys = 28 / 4;
+  const profile = [[0, 0], [2, 0], [10, 1.2], [18, 4], [26, 1.2], [34, 0], [36, 0]];
   ctx.strokeStyle = dim; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(bX, bY); ctx.lineTo(bX + bW, bY); ctx.stroke();
 
@@ -110,15 +111,15 @@ function drawHillDiagram(deg, cardinal) {
 
   ctx.strokeStyle = dark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)';
   ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
-  for (const u of [4, 12, 20]) { ctx.beginPath(); ctx.moveTo(bX + u * sc, bY); ctx.lineTo(bX + u * sc, bY - 50); ctx.stroke(); }
+  for (const u of [2, 10, 18, 26, 34]) { ctx.beginPath(); ctx.moveTo(bX + u * sc, bY); ctx.lineTo(bX + u * sc, bY - 50); ctx.stroke(); }
   ctx.setLineDash([]);
 
   ctx.font = `7px ${mono}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
   const segs = [
-    { mid: 2,  y: 0, label: ['145', `r=${h.asc145}`], col: grn },
-    { mid: 8,  y: 2, label: ['146', `r=${h.asc146}`], col: acc },
-    { mid: 16, y: 2, label: ['146', `r=${h.dsc146}`], col: acc },
-    { mid: 22, y: 0, label: ['145', `r=${h.dsc145}`], col: grn },
+    { mid: 6,  y: 0, label: ['145', `r=${h.asc145}`], col: grn },
+    { mid: 14, y: 3, label: ['146', `r=${h.asc146}`], col: acc },
+    { mid: 22, y: 3, label: ['146', `r=${h.dsc146}`], col: acc },
+    { mid: 30, y: 0, label: ['145', `r=${h.dsc145}`], col: grn },
   ];
   for (const s of segs) {
     const lx = bX + s.mid * sc, ly = bY - s.y * ys - 22;
@@ -126,7 +127,7 @@ function drawHillDiagram(deg, cardinal) {
     s.label.forEach((ln, i) => ctx.fillText(ln, lx, ly + i * 9));
   }
   ctx.fillStyle = cyn; ctx.textAlign = 'left';
-  ctx.fillText('y+4', bX + 12 * sc + 4, bY - 4 * ys - 4);
+  ctx.fillText('y+4', bX + 18 * sc + 4, bY - 4 * ys - 6);
 }
 
 function addHill() {
@@ -143,8 +144,8 @@ function addHill() {
     const off = (w - halfW) * CS;
     const wx = bx + (travelZ ? off : 0), wz = bz + (travelZ ? 0 : off);
     const at = (d, dy) => [{ x: wx + h.dx * d, y: by + dy, z: wz + h.dz * d }];
-    lines.push({ id: BLOCK.RAMP_TRANSITION, rot: h.asc145, points: at(8, 0) });
-    lines.push({ id: BLOCK.RAMP_SLOPE,      rot: h.asc146, points: at(16, 2) });
+    lines.push({ id: BLOCK.RAMP_TRANSITION, rot: h.asc145, points: at(4, 0) });
+    lines.push({ id: BLOCK.RAMP_SLOPE,      rot: h.asc146, points: at(12, 2) });
     lines.push({ id: BLOCK.RAMP_SLOPE,      rot: h.dsc146, points: at(24, 2) });
     lines.push({ id: BLOCK.RAMP_TRANSITION, rot: h.dsc145, points: at(32, 0) });
   }
